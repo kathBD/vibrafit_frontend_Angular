@@ -1,0 +1,84 @@
+<div class="dashboard-layout" [style.background-image]="'url(assets/images/trainner.jpg)'">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="menuOpen">
+    <div class="sidebar-brand">
+      <img src="assets/images/logo.jpg" alt="VibraFit"
+           width="38" class="rounded" onerror="this.style.display='none'">
+      <span>VibraFit</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ userName().charAt(0).toUpperCase() }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ userName() }}</span>
+        <span class="user-role">Administrador</span>
+      </div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li><a routerLink="/admin/dashboard" routerLinkActive="active"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+      <li><a routerLink="/admin/usuarios" routerLinkActive="active"><i class="bi bi-people-fill"></i> Usuarios</a></li>
+      <li><a routerLink="/admin/rutinas" routerLinkActive="active"><i class="bi bi-list-check"></i> Rutinas</a></li>
+      <li><a routerLink="/exercises/catalog" routerLinkActive="active"><i class="bi bi-lightning-charge-fill"></i> Ejercicios</a></li>
+      <li><a routerLink="/admin/notificaciones" routerLinkActive="active"><i class="bi bi-bell-fill"></i> Notificaciones</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-wrapper">
+
+    <!-- Topbar mobile -->
+    <header class="topbar">
+      <button class="topbar-toggle" (click)="menuOpen = !menuOpen">
+        <i [class]="menuOpen ? 'bi bi-x-lg' : 'bi bi-list'"></i>
+      </button>
+      <span class="topbar-title">Dashboard Admin</span>
+    </header>
+
+    <main class="main-content">
+
+      <!-- Header -->
+      <div class="page-header">
+        <h2>¡Bienvenido, {{ userName() }}! 👋</h2>
+        <p>Panel principal del sistema VibraFit</p>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        @for (kpi of kpis(); track kpi.label) {
+          <div class="kpi-card">
+            <div class="kpi-icon" [style.background]="kpi.color">
+              <i [class]="'bi ' + kpi.icon"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">{{ kpi.label }}</span>
+              <span class="kpi-value">{{ kpi.value }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Accesos rápidos -->
+      <div class="section-title">Accesos rápidos</div>
+      <div class="quick-grid">
+        @for (link of quickLinks; track link.label) {
+          <a [routerLink]="link.link" class="quick-card">
+            <div class="quick-icon" [style.background]="link.color">
+              <i [class]="'bi ' + link.icon"></i>
+            </div>
+            <span>{{ link.label }}</span>
+            <i class="bi bi-arrow-right ms-auto"></i>
+          </a>
+        }
+      </div>
+
+    </main>
+  </div>
+</div>
