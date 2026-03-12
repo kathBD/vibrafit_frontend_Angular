@@ -1,0 +1,23 @@
+<app-navbar />
+
+<div class="landing-wrapper">
+  <div class="landing-overlay"></div>
+
+  <div class="landing-content">
+    <h1 class="landing-title">
+      ¡Bienvenido a la plataforma de entrenamiento!
+    </h1>
+
+    <div class="features-box">
+      @for (feature of features; track feature.title) {
+        <a [routerLink]="feature.link" class="feature-card">
+          <i [class]="'bi ' + feature.icon"></i>
+          <div class="feature-title">{{ feature.title }}</div>
+          <div class="feature-desc">{{ feature.desc }}</div>
+        </a>
+      }
+    </div>
+  </div>
+</div>
+
+<app-footer />

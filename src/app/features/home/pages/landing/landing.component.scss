@@ -1,0 +1,83 @@
+.landing-wrapper {
+  min-height: calc(100vh - 68px);
+  position: relative;
+  background: url('/assets/images/gym.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 1.5rem 2rem;
+  margin: 0;
+}
+
+.landing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.landing-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+}
+
+.landing-title {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
+  text-shadow: 0 2px 12px rgba(0,0,0,.5);
+
+  @media (max-width: 768px) { font-size: 1.6rem; }
+}
+
+.features-box {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 16px;
+  padding: 2rem;
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(8px);
+
+  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  transition: background .2s, transform .2s;
+
+  i {
+    font-size: 1.8rem;
+    color: rgba(255,255,255,.85);
+    margin-bottom: .25rem;
+  }
+
+  &:hover {
+    background: rgba(255,255,255,.12);
+    transform: translateY(-3px);
+    color: #fff;
+  }
+}
+
+.feature-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.feature-desc {
+  font-size: .82rem;
+  color: rgba(255,255,255,.6);
+}
