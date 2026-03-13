@@ -1,0 +1,308 @@
+<div class="um-layout" [style.background-image]="'url(assets/images/fuerza.jpg)'">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/images/logo.jpg" alt="VibraFit" width="38" class="rounded" onerror="this.style.display='none'">
+      <span>VibraFit</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">A</div>
+      <div class="user-info">
+        <span class="user-name">Administrador</span>
+        <span class="user-role">ADMIN</span>
+      </div>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a routerLink="/admin/dashboard" routerLinkActive="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      </li>
+      <li><a routerLink="/admin/usuarios" routerLinkActive="active"><i class="bi bi-people-fill"></i> Usuarios</a></li>
+      <li><a routerLink="/admin/rutinas" routerLinkActive="active"><i class="bi bi-list-check"></i> Rutinas</a></li>
+      <li><a routerLink="/exercises/catalog" routerLinkActive="active"><i class="bi bi-lightning-charge-fill"></i>
+          Ejercicios</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <a routerLink="/admin/dashboard" class="btn-back-dash">
+        <i class="bi bi-arrow-left"></i> Volver al Panel
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-wrapper">
+    <main class="main-content">
+
+      <!-- Alerts -->
+      @if (successMsg()) {
+      <div class="alert-success-vf">
+        <i class="bi bi-check-circle-fill"></i> {{ successMsg() }}
+      </div>
+      }
+      @if (errorMsg()) {
+      <div class="alert-error-vf">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ errorMsg() }}
+      </div>
+      }
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h2>Gestión de Usuarios</h2>
+          <p>Administra todos los usuarios del sistema</p>
+        </div>
+        <button class="btn-create" (click)="openCreate()">
+          <i class="bi bi-person-plus-fill"></i> Nuevo Usuario
+        </button>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-item">
+          <span class="kpi-val">{{ totalUsuarios() }}</span>
+          <span class="kpi-lbl">Total</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-val" style="color:#0d6efd">{{ totalClientes() }}</span>
+          <span class="kpi-lbl">Clientes</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-val" style="color:#f39c12">{{ totalEntrenadores() }}</span>
+          <span class="kpi-lbl">Entrenadores</span>
+        </div>
+        <div class="kpi-item">
+          <span class="kpi-val" style="color:#dc3545">{{ totalAdmins() }}</span>
+          <span class="kpi-lbl">Admins</span>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Buscar por nombre o correo..."
+            (input)="searchTerm.set($any($event.target).value)">
+        </div>
+        <div class="rol-filters">
+          @for (rol of ['TODOS', 'CLIENTE', 'ENTRENADOR', 'ADMINISTRADOR']; track rol) {
+          <button class="rol-btn" [class.active]="filterRol() === rol" (click)="filterRol.set(rol)">
+            {{ rol }}
+          </button>
+          }
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-box">
+        @if (isLoading()) {
+        <div class="loading-state">
+          <i class="bi bi-arrow-repeat spin"></i> Cargando usuarios...
+        </div>
+        } @else if (filteredUsuarios().length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-people"></i>
+          <p>No se encontraron usuarios</p>
+        </div>
+        } @else {
+        <table class="vf-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (usuario of filteredUsuarios(); track usuario.usuarioId) {
+            <tr>
+              <td class="td-id">#{{ usuario.usuarioId }}</td>
+              <td>
+                <div class="user-cell">
+                  <div class="mini-avatar" [style.background]="getRolColor(usuario.rol.nombre)">
+                    {{ usuario.nombre.charAt(0).toUpperCase() }}
+                  </div>
+                  {{ usuario.nombre }}
+                </div>
+              </td>
+              <td class="td-correo">{{ usuario.correo }}</td>
+              <td>
+
+                <span class="rol-badge" [style.background]="getRolColor(usuario.rol.nombre) + '22'"
+                  [style.color]="getRolColor(usuario.rol.nombre)">
+                  {{ usuario.rol.nombre }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [class.active]="usuario.activo" [class.inactive]="!usuario.activo">
+                  {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <button class="btn-edit" (click)="openEdit(usuario)" title="Editar">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button class="btn-delete" (click)="openDelete(usuario)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        }
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Modal Crear/Editar ── -->
+@if (showModal()) {
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <div class="modal-head">
+      <h3>
+        <i [class]="isEditing() ? 'bi bi-pencil-square' : 'bi bi-person-plus-fill'"></i>
+        {{ isEditing() ? 'Editar Usuario' : 'Nuevo Usuario' }}
+      </h3>
+      <button class="modal-close" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-content" [formGroup]="userForm">
+
+      <div class="form-section-title">Acceso</div>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Nombre completo *</label>
+          <input type="text" formControlName="nombre" placeholder="Juan Pérez">
+          @if (userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched) {
+          <span class="form-error">Campo requerido</span>
+          }
+        </div>
+        <div class="form-field">
+          <label>Correo electrónico *</label>
+          <input type="email" formControlName="correo" placeholder="ejemplo@gym.com">
+          @if (userForm.get('correo')?.invalid && userForm.get('correo')?.touched) {
+          <span class="form-error">Correo inválido</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Contraseña {{ isEditing() ? '(dejar vacío para no cambiar)' : '*' }}</label>
+          <input type="password" formControlName="password" placeholder="••••••••">
+        </div>
+        <div class="form-field">
+          <label>Rol *</label>
+          <select formControlName="rolNombre">
+            @for (rol of roles; track rol) {
+            <option [value]="rol">{{ rol }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Datos Personales</div>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono" placeholder="3001234567">
+        </div>
+        <div class="form-field">
+          <label>Sexo</label>
+          <select formControlName="sexo">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Fecha de nacimiento</label>
+          <input type="date" formControlName="fechaNacimiento">
+        </div>
+        <div class="form-field">
+          <label>Estado cuenta</label>
+          <select formControlName="activo">
+            <option [ngValue]="true">Activo</option>
+            <option [ngValue]="false">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Peso (kg)</label>
+          <input type="number" formControlName="peso" placeholder="70">
+        </div>
+        <div class="form-field">
+          <label>Estatura (m)</label>
+          <input type="number" formControlName="estatura" placeholder="1.75">
+        </div>
+      </div>
+
+      <div class="form-section-title">Perfil Deportivo</div>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Objetivo</label>
+          <input type="text" formControlName="objetivo" placeholder="Bajar de peso">
+        </div>
+        <div class="form-field">
+          <label>Especialidad</label>
+          <input type="text" formControlName="especialidad" placeholder="CrossFit, Yoga...">
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-field">
+          <label>Horario inicio</label>
+          <input type="time" formControlName="horarioInicio">
+        </div>
+        <div class="form-field">
+          <label>Horario fin</label>
+          <input type="time" formControlName="horarioFin">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer-vf">
+      <button class="btn-cancel-modal" (click)="closeModal()">Cancelar</button>
+      <button class="btn-save-modal" (click)="onSubmit()" [disabled]="userForm.invalid">
+        <i class="bi bi-save"></i>
+        {{ isEditing() ? 'Guardar Cambios' : 'Crear Usuario' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+}
+
+<!-- ── Modal Eliminar ── -->
+@if (showDeleteModal()) {
+<div class="modal-overlay" (click)="closeDeleteModal()">
+  <div class="modal-box modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h3><i class="bi bi-exclamation-triangle-fill text-danger"></i> Confirmar eliminación</h3>
+      <button class="modal-close" (click)="closeDeleteModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-body-content">
+      <p>¿Estás seguro de eliminar a <strong>{{ selectedUser()?.nombre }}</strong>?</p>
+      <p class="text-danger-sm">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="modal-footer-vf">
+      <button class="btn-cancel-modal" (click)="closeDeleteModal()">Cancelar</button>
+      <button class="btn-danger-modal" (click)="confirmDelete()">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+}
