@@ -1,0 +1,185 @@
+<!-- dashboard-trainer.component.html -->
+<div class="dashboard-layout" [style.background-image]="'url(assets/images/trainner.jpg)'">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="menuOpen()">
+    <div class="sidebar-brand">
+      <img src="assets/images/logo.jpg" alt="VibraFit"
+           width="38" class="rounded" onerror="this.style.display='none'">
+      <span>VibraFit</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ getInitials() }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ userName() }}</span>
+        <span class="user-role">ENTRENADOR</span>
+      </div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li>
+        <a routerLink="/trainer/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/trainer/clientes" routerLinkActive="active">
+          <i class="bi bi-person-lines-fill"></i> Mis Clientes
+        </a>
+      </li>
+      <li>
+        <a routerLink="/trainer/rutinas" routerLinkActive="active">
+          <i class="bi bi-list-check"></i> Rutinas
+        </a>
+      </li>
+      <li>
+        <a routerLink="/trainer/estadisticas" routerLinkActive="active">
+          <i class="bi bi-bar-chart-fill"></i> Estadísticas
+        </a>
+      </li>
+      <li>
+        <a routerLink="/trainer/calendario" routerLinkActive="active">
+          <i class="bi bi-calendar-week"></i> Calendario
+        </a>
+      </li>
+      <li>
+        <a routerLink="/exercises/catalog" routerLinkActive="active">
+          <i class="bi bi-lightning-charge-fill"></i> Biblioteca Ejercicios
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <button class="topbar-toggle" (click)="toggleMenu()">
+        <i [class]="menuOpen() ? 'bi bi-x-lg' : 'bi bi-list'"></i>
+      </button>
+      <span class="topbar-title">Dashboard Entrenador</span>
+    </header>
+
+    <main class="main-content">
+      <!-- Header con bienvenida y estadísticas rápidas -->
+      <div class="page-header">
+        <h2>¡Bienvenido, {{ userName() }}! 🏋️‍♂️</h2>
+        <p>Aquí puedes gestionar tus clientes, rutinas y seguir su progreso.</p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #0d6efd20">
+            <i class="bi bi-people-fill" style="color: #0d6efd"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats().clientesActivos }}</span>
+            <span class="stat-label">Clientes Activos</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #dc354520">
+            <i class="bi bi-list-check" style="color: #dc3545"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats().rutinasPendientes }}</span>
+            <span class="stat-label">Rutinas Pendientes</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #19875420">
+            <i class="bi bi-calendar-check" style="color: #198754"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats().sesionesHoy }}</span>
+            <span class="stat-label">Sesiones Hoy</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f39c1220">
+            <i class="bi bi-person-plus-fill" style="color: #f39c12"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats().clientesNuevos }}</span>
+            <span class="stat-label">Nuevos esta semana</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="dashboard-cards">
+        @for (card of cards; track card.title) {
+          <a [routerLink]="card.link" class="dash-card">
+            <div class="dash-card-icon" [style.background]="card.color">
+              <i [class]="'bi ' + card.icon"></i>
+            </div>
+            <div class="dash-card-body">
+              <h4>{{ card.title }}</h4>
+              <p>{{ card.desc }}</p>
+            </div>
+            @if (card.badge) {
+              <span class="dash-card-badge" [style.background]="card.badgeColor">
+                {{ card.badge }}
+              </span>
+            }
+            <i class="bi bi-arrow-right dash-card-arrow"></i>
+          </a>
+        }
+      </div>
+
+      <!-- Acciones Rápidas y Actividad Reciente -->
+      <div class="dashboard-footer">
+        <!-- Acciones Rápidas -->
+        <div class="quick-actions">
+          <h3>Acciones Rápidas</h3>
+          <div class="actions-grid">
+            @for (action of quickActions; track action.label) {
+              <a [routerLink]="action.link" class="action-item">
+                <i [class]="'bi ' + action.icon" [style.color]="action.color"></i>
+                <span>{{ action.label }}</span>
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Actividad Reciente -->
+        <div class="recent-activity">
+          <h3>Actividad Reciente</h3>
+          <div class="activity-list">
+            <div class="activity-item">
+              <i class="bi bi-person-check" style="color: #0d6efd"></i>
+              <div class="activity-content">
+                <span class="activity-title">Carlos Martínez completó su rutina</span>
+                <span class="activity-time">Hace 15 minutos</span>
+              </div>
+            </div>
+            <div class="activity-item">
+              <i class="bi bi-file-plus" style="color: #198754"></i>
+              <div class="activity-content">
+                <span class="activity-title">Nueva rutina asignada a Ana López</span>
+                <span class="activity-time">Hace 2 horas</span>
+              </div>
+            </div>
+            <div class="activity-item">
+              <i class="bi bi-bar-chart" style="color: #f39c12"></i>
+              <div class="activity-content">
+                <span class="activity-title">Progreso semanal actualizado para 5 clientes</span>
+                <span class="activity-time">Hace 3 horas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
