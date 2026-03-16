@@ -17,7 +17,8 @@ export interface Usuario {
   sexo?:           string;
   peso?:           number;
   estatura?:       number;
-  activo?:         boolean;
+  activo?:         boolean;      // ← Para uso interno
+  esta_activo?:    boolean;      // ← Para enviar al backend
   especialidad?:   string;
   horarioInicio?:  string;
   horarioFin?:     string;
@@ -55,14 +56,49 @@ export class UsuarioService {
   }
 
   crear(usuario: Usuario): Observable<Usuario> {
-    return this.http.post<Usuario>(this.API, usuario, { headers: this.headers() });
+    // Transformar para el backend
+    const usuarioBackend = this.transformarParaBackend(usuario);
+    console.log('Enviando al backend:', usuarioBackend); // Para depurar
+    return this.http.post<Usuario>(this.API, usuarioBackend, { headers: this.headers() });
   }
 
   editar(id: number, usuario: Usuario): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.API}/${id}`, usuario, { headers: this.headers() });
+    // Transformar para el backend
+    const usuarioBackend = this.transformarParaBackend(usuario);
+    return this.http.put<Usuario>(`${this.API}/${id}`, usuarioBackend, { headers: this.headers() });
   }
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API}/${id}`, { headers: this.headers() });
+  }
+
+  // Método para transformar el objeto de Angular al formato que espera el backend
+  private transformarParaBackend(usuario: Usuario): any {
+    const backendObj: any = {
+      nombre: usuario.nombre,
+      correo: usuario.correo,
+      password: usuario.password,
+      telefono: usuario.telefono || "",
+      sexo: usuario.sexo || "M",
+      fechaNacimiento: usuario.fechaNacimiento,
+      peso: usuario.peso || 0,
+      estatura: usuario.estatura || 0,
+      objetivo: usuario.objetivo || "",
+      estadoFisico: usuario.estadoFisico || "",
+      especialidad: usuario.especialidad || "",
+      horarioInicio: usuario.horarioInicio || "",
+      horarioFin: usuario.horarioFin || "",
+      esta_activo: usuario.activo !== undefined ? usuario.activo : true,  // ← CLAVE: convertir activo a esta_activo
+      rol: {
+        rolId: usuario.rol?.rolId || 1
+      }
+    };
+
+    // Solo incluir ID si existe
+    if (usuario.usuarioId) {
+      backendObj.usuarioId = usuario.usuarioId;
+    }
+
+    return backendObj;
   }
 }
