@@ -5,6 +5,12 @@ Frontend del sistema de gestión de gimnasio **VibraFit**, desarrollado con Angu
 ---
 <img width="600" height="898" alt="image" src="https://github.com/user-attachments/assets/ed3d42a9-a381-4323-a5bb-246458b3a6bb" />
 <img width="600" height="891" alt="image" src="https://github.com/user-attachments/assets/972f0916-fe55-4c0d-9929-951d52b8a28b" />
+<img width="1903" height="899" alt="image" src="https://github.com/user-attachments/assets/8de3cfff-9e6b-473c-a0f9-2eb7050657f4" />
+<img width="1899" height="830" alt="image" src="https://github.com/user-attachments/assets/3f89686b-18fc-42ab-8e25-e680a593500b" />
+<img width="1889" height="837" alt="image" src="https://github.com/user-attachments/assets/ee90130a-31eb-4066-aff4-b5f563db7035" />
+
+
+
 
 
 ## 🚀 Tecnologías
