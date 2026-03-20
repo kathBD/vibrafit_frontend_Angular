@@ -1,0 +1,102 @@
+<div class="detalle-container">
+  <button class="btn-volver" (click)="volverAlCatalogo()">
+    <i class="bi bi-arrow-left"></i> Volver al catálogo
+  </button>
+
+  <!-- Cargando -->
+  @if (cargando()) {
+    <div class="cargando">
+      <div class="spinner"></div>
+      <p>Cargando ejercicio...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error() && !cargando()) {
+    <div class="error">
+      <i class="bi bi-exclamation-triangle"></i>
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  <!-- Detalle del ejercicio -->
+  @if (ejercicio() && !cargando() && !error()) {
+    <div class="ejercicio-detalle">
+      <!-- Cabecera -->
+      <div class="cabecera">
+        <h1>{{ ejercicio()?.name }}</h1>
+        <div class="badges">
+          @if (ejercicio()?.level) {
+            <span class="nivel-badge" [style.background]="getColorNivel(ejercicio()?.level)">
+              {{ ejercicio()?.level }}
+            </span>
+          }
+          @if (ejercicio()?.category) {
+            <span class="categoria-badge">
+              <i class="bi bi-tag"></i> {{ ejercicio()?.category }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="grid-detalle">
+<!-- Columna izquierda - Instrucciones -->
+<div class="info-principal">
+  <div class="seccion">
+    <h3><i class="bi bi-list-check"></i> Instrucciones</h3>
+    <div class="instrucciones-lista">
+      @if (ejercicio()?.instructions?.length) {
+        @for (instruccion of ejercicio()?.instructions; track $index) {
+          <p class="instruccion-item">{{ $index + 1 }}. {{ instruccion }}</p>
+        }
+      } @else {
+        <p class="instrucciones">{{ ejercicio()?.instructions?.[0]?.substring(0, 80) || 'Sin instrucciones' }}...</p>
+      }
+    </div>
+  </div>
+</div>
+
+        <!-- Columna derecha - Información adicional -->
+        <div class="info-adicional">
+          <!-- Equipamiento -->
+          <div class="tarjeta-info">
+            <h4><i class="bi bi-tools"></i> Equipamiento necesario</h4>
+            <p class="equipamiento-valor">
+              {{ ejercicio()?.equipment || 'Sin equipamiento' }}
+            </p>
+          </div>
+
+          <!-- Músculos principales -->
+          <div class="tarjeta-info">
+            <h4><i class="bi bi-bullseye"></i> Músculos principales</h4>
+            <ul>
+              @for (musculo of ejercicio()?.primaryMuscles; track musculo) {
+                <li>{{ musculo }}</li>
+              }
+            </ul>
+          </div>
+
+          <!-- Músculos secundarios -->
+          @if (ejercicio()?.secondaryMuscles?.length) {
+            <div class="tarjeta-info">
+              <h4><i class="bi bi-diagram-3"></i> Músculos secundarios</h4>
+              <ul>
+                @for (musculo of ejercicio()?.secondaryMuscles; track musculo) {
+                  <li>{{ musculo }}</li>
+                }
+              </ul>
+            </div>
+          }
+
+          <!-- Tipo de fuerza -->
+          @if (ejercicio()?.force) {
+            <div class="tarjeta-info">
+              <h4><i class="bi bi-lightning"></i> Tipo de fuerza</h4>
+              <p>{{ ejercicio()?.force }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

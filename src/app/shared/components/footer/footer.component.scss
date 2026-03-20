@@ -1,12 +1,14 @@
 .vf-footer {
   background: #08090B;
    padding: 0.5rem 2rem;
-  border-top: 1px solid rgba(255,255,255,.06)
+
+  border-top: 1px solid;
 }
 
 .vf-footer-container {
   max-width: 100%;
   margin: 0 auto;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,7 +40,7 @@
 }
 
 .vf-footer-copy {
-  color: rgba(255,255,255,.35);
+  color: #fff;
   font-size: .82rem;
   margin: 0;
 }

@@ -1,0 +1,147 @@
+<div class="contenedor-catalogo">
+  <!-- Encabezado -->
+  <div class="encabezado">
+    <h1>🏋️ Catálogo de Ejercicios</h1>
+    <p>Explora {{ ejercicios().length }} ejercicios con instrucciones detalladas</p>
+  </div>
+
+  <!-- Selector de fuente -->
+  <div class="selector-fuente">
+    <label>Fuente de ejercicios:</label>
+    <select (change)="cambiarFuente($any($event.target).value)">
+      <option value="local">Base de datos local (166 ejercicios)</option>
+      <option value="wger">Wger API (con imágenes)</option>
+    </select>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="buscador">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar ejercicio..." (input)="terminoBusqueda.set($any($event.target).value)">
+    </div>
+
+    <select class="selector-filtro" (change)="categoriaSeleccionada.set($any($event.target).value)">
+      <option value="todas">Todas las categorías</option>
+      @for (cat of categorias(); track cat) {
+      <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+
+    <select class="selector-filtro" (change)="nivelSeleccionado.set($any($event.target).value)">
+      <option value="todos">Todos los niveles</option>
+      @for (nivel of niveles(); track nivel) {
+      <option [value]="nivel">{{ nivel }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Cargando -->
+  @if (cargando()) {
+  <div class="cargando">
+    <div class="spinner"></div>
+    <p>Cargando ejercicios...</p>
+  </div>
+  }
+
+  <!-- Grid de ejercicios -->
+  @if (!cargando()) {
+  <div class="grid-ejercicios">
+    @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
+    <div class="tarjeta-ejercicio">
+      <!-- Imagen para fuente LOCAL -->
+      @if (fuenteSeleccionada() === 'local' && ejercicio.images && ejercicio.images.length > 0) {
+      <div class="contenedor-imagen">
+        <img [src]="'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + ejercicio.images[0]"
+          [alt]="ejercicio.name" class="imagen-ejercicio" loading="lazy" (error)="ejercicio.images = []">
+      </div>
+      }
+
+      <!-- Imagen para fuente WGER -->
+      @if (fuenteSeleccionada() === 'wger' && ejercicio.imageUrl) {
+      <div class="contenedor-imagen">
+        <img [src]="ejercicio.imageUrl" [alt]="ejercicio.name" class="imagen-ejercicio" loading="lazy"
+          (error)="ejercicio.imageUrl = null">
+        <ng-template #sinImagen>
+          <img src="assets/no-image.png">
+        </ng-template>
+      </div>
+      }
+
+      <!-- Si no hay imagen, muestra un placeholder -->
+      @if (!ejercicio.images?.length && !ejercicio.imageUrl) {
+      <div class="contenedor-imagen sin-imagen">
+        <div class="placeholder">
+          <i class="bi bi-image"></i>
+          <span>Sin imagen</span>
+        </div>
+      </div>
+      }
+
+      <div class="cabecera-tarjeta">
+        <h3>{{ ejercicio.name }}</h3>
+        @if (ejercicio.level) {
+        <span class="nivel-badge" [style.background]="getColorNivel(ejercicio.level)">
+          {{ ejercicio.level === 'beginner' ? 'Principiante' :
+          ejercicio.level === 'intermediate' ? 'Intermedio' :
+          ejercicio.level === 'expert' ? 'Experto' : ejercicio.level }}
+        </span>
+        }
+      </div>
+
+      <div class="cuerpo-tarjeta">
+        <div class="etiquetas">
+          @if (ejercicio.primaryMuscles && ejercicio.primaryMuscles.length > 0) {
+          @for (musculo of ejercicio.primaryMuscles.slice(0, 2); track musculo) {
+          <span class="etiqueta">{{ musculo }}</span>
+          }
+          }
+        </div>
+
+        <!-- Instrucciones-->
+        <p class="instrucciones"
+          [innerHTML]="(ejercicio.description || ejercicio.instructions?.[0] || 'Sin instrucciones') | slice:0:100">
+        </p>
+        <div class="info-adicional">
+          @if (ejercicio.equipment && ejercicio.equipment !== 'body only') {
+          <span class="equipamiento">
+            <i class="bi bi-tools"></i>
+            {{ ejercicio.equipment === 'body only' ? 'Peso corporal' :
+            ejercicio.equipment === 'dumbbell' ? 'Mancuernas' :
+            ejercicio.equipment === 'barbell' ? 'Barra' :
+            ejercicio.equipment === 'kettlebells' ? 'Kettlebells' :
+            ejercicio.equipment === 'machine' ? 'Máquina' :
+            ejercicio.equipment === 'cable' ? 'Cable' :
+            ejercicio.equipment === 'bands' ? 'Bandas elásticas' :
+            ejercicio.equipment === 'medicine ball' ? 'Balón medicinal' :
+            ejercicio.equipment === 'exercise ball' ? 'Pelota de ejercicios' :
+            ejercicio.equipment === 'foam roll' ? 'Rodillo de espuma' :
+            ejercicio.equipment === 'other' ? 'Otro' : ejercicio.equipment }}
+          </span>
+          }
+          @if (ejercicio.category) {
+          <span class="categoria">
+            <i class="bi bi-tag"></i>
+            {{ ejercicio.category === 'strength' ? 'Fuerza' :
+            ejercicio.category === 'stretching' ? 'Estiramiento' :
+            ejercicio.category === 'cardio' ? 'Cardio' :
+            ejercicio.category === 'plyometrics' ? 'Pliometría' :
+            ejercicio.category === 'powerlifting' ? 'Powerlifting' :
+            ejercicio.category === 'strongman' ? 'Strongman' :
+            ejercicio.category === 'olympic weightlifting' ? 'Pesas olímpicas' :
+            ejercicio.category }}
+          </span>
+          }
+        </div>
+      </div>
+
+      <div class="pie-tarjeta">
+        <button class="btn-ver" [routerLink]="['/exercises', ejercicio.id]">
+          Ver detalles
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>
