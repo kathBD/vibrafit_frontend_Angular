@@ -5,8 +5,8 @@ import { AuthService } from '../services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth  = inject(AuthService);
   const token = auth.getToken();
-  if (token && req.url.includes('localhost:8080')) {
-    return next(req.clone({
+// Ahora permite localhost O tu nuevo backend en Render
+if (token && (req.url.includes('localhost:8080') || req.url.includes('gym-backend-xwat.onrender.com'))) {    return next(req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     }));
   }
