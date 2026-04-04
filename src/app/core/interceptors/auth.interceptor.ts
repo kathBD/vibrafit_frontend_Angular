@@ -6,8 +6,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth  = inject(AuthService);
   const token = auth.getToken();
 // Ahora permite localhost O tu nuevo backend en Render
-if (token && (req.url.includes('gym-backend-xwat.onrender.com')) 
-  {    return next(req.clone({
+if (token && (req.url.includes('https://gym-backend-xwat.onrender.com'))) {    return next(req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     }));
   }
