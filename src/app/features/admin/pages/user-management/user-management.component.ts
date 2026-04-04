@@ -98,6 +98,7 @@ export class UserManagementComponent implements OnInit {
     this.userForm.get('password')?.updateValueAndValidity();
     this.showModal.set(true);
   }
+  
 
   openEdit(usuario: Usuario): void {
     this.isEditing.set(true);
@@ -131,6 +132,8 @@ export class UserManagementComponent implements OnInit {
   closeModal(): void {
     this.showModal.set(false);
     this.selectedUser.set(null);
+    this.userForm.enable();
+    
   }
 
   closeDeleteModal(): void {
@@ -138,10 +141,40 @@ export class UserManagementComponent implements OnInit {
     this.selectedUser.set(null);
   }
 
-  onSubmit(): void {
+  openDetails(usuario: Usuario): void {
+    this.isEditing.set(false);
+    this.selectedUser.set(usuario);
+
+    // Llenamos el formulario con los datos del usuario
+    this.userForm.patchValue({
+      nombre:          usuario.nombre,
+      correo:          usuario.correo,
+      telefono:        usuario.telefono || '',
+      sexo:            usuario.sexo || 'M',
+      peso:            usuario.peso as any,
+      estatura:        usuario.estatura as any,
+      activo:          usuario.activo ?? true,
+      especialidad:    usuario.especialidad || '',
+      horarioInicio:   usuario.horarioInicio || '',
+      horarioFin:      usuario.horarioFin || '',
+      fechaNacimiento: usuario.fechaNacimiento || '',
+      objetivo:        usuario.objetivo || '',
+      estadoFisico:    usuario.estadoFisico || '',
+      rolNombre:       usuario.rol?.nombre || ''
+    });
+    this.userForm.disable(); 
+    
+    this.showModal.set(true);
+  }
+
+ onSubmit(): void {
     if (this.userForm.invalid) return;
 
     const val = this.userForm.value;
+    
+    const rolId = val.rolNombre === 'ADMINISTRADOR' ? 3 :
+                  val.rolNombre === 'ENTRENADOR' ? 2 : 1;
+
     const payload: Usuario = {
       nombre:          val.nombre!,
       correo:          val.correo!,
@@ -156,7 +189,7 @@ export class UserManagementComponent implements OnInit {
       fechaNacimiento: val.fechaNacimiento || undefined,
       objetivo:        val.objetivo || undefined,
       estadoFisico:    val.estadoFisico || undefined,
-      rol:             { nombre: val.rolNombre! }
+      rol:             { rolId: rolId, nombre: val.rolNombre! }
     };
 
     if (val.password) payload.password = val.password;
@@ -182,6 +215,7 @@ export class UserManagementComponent implements OnInit {
       });
     }
   }
+
 
   confirmDelete(): void {
     const id = this.selectedUser()!.usuarioId!;

@@ -410,6 +410,20 @@
   justify-content: center;
 }
 
+.btn-view {
+  background-color: #17a2b8; // Color cian/info
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #138496;
+  }
+}
 .btn-edit {
   width: 32px;
   height: 32px;

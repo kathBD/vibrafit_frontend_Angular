@@ -29,6 +29,11 @@ export interface Usuario {
   estadoFisico?:   string;
 }
 
+export interface Rol {
+  rolId?: number;
+  nombre: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private http = inject(HttpClient);
@@ -89,8 +94,9 @@ export class UsuarioService {
       horarioInicio: usuario.horarioInicio || "",
       horarioFin: usuario.horarioFin || "",
       esta_activo: usuario.activo !== undefined ? usuario.activo : true,  // ← CLAVE: convertir activo a esta_activo
+      // CORRECCIÓN 2: Ya no quemamos el 1. Usamos el ID que viene del objeto
       rol: {
-        rolId: usuario.rol?.rolId || 1
+        rolId: usuario.rol?.rolId 
       }
     };
 
