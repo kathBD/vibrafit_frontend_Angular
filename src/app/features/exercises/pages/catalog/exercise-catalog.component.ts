@@ -11,9 +11,9 @@ import { ExerciseService, Exercise } from '../../../../core/services/exercise.se
   styleUrls: ['./exercise-catalog.component.scss']
 })
 export class ExerciseCatalogComponent implements OnInit {
+
   private exerciseService = inject(ExerciseService);
 
-  // Señales
   ejercicios = signal<Exercise[]>([]);
   cargando = signal(true);
   terminoBusqueda = signal('');
@@ -22,36 +22,46 @@ export class ExerciseCatalogComponent implements OnInit {
   nivelSeleccionado = signal('todos');
   niveles = signal<string[]>(['beginner', 'intermediate', 'expert']);
 
-  // Fuente seleccionada
   fuenteSeleccionada = signal<'local' | 'wger'>('local');
+  imagenesConError = signal<Set<string>>(new Set());
 
-  // Computed para filtrar
   ejerciciosFiltrados = computed(() => {
     let lista = this.ejercicios();
-    const termino = this.terminoBusqueda().toLowerCase();
+
+    const normalizar = (t: string) =>
+      t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const termino = normalizar(this.terminoBusqueda().trim());
     const categoria = this.categoriaSeleccionada();
     const nivel = this.nivelSeleccionado();
 
     if (termino) {
-      lista = lista.filter(e =>
-        e.name.toLowerCase().includes(termino) ||
-        e.primaryMuscles?.some((m: string) => m.toLowerCase().includes(termino))
-      );
+      lista = lista.filter(e => {
+        const nombre = normalizar(e.name || '');
+        const musculos = normalizar((e.primaryMuscles || []).join(' '));
+        const categoriaTxt = normalizar(e.category || '');
+
+        return (
+          nombre.includes(termino) ||
+          musculos.includes(termino) ||
+          categoriaTxt.includes(termino)
+        );
+      });
     }
 
-    if (categoria !== 'todas') {
+    if (categoria !== 'todas' && this.fuenteSeleccionada() === 'local') {
       lista = lista.filter(e =>
-        e.category?.toLowerCase() === categoria.toLowerCase()
+        (e.category || '').toLowerCase() === categoria.toLowerCase()
       );
     }
 
     if (nivel !== 'todos') {
       lista = lista.filter(e =>
-        e.level?.toLowerCase() === nivel.toLowerCase()
+        (e.level || '').toLowerCase() === nivel.toLowerCase()
       );
     }
 
-    return lista.slice(0, 50);
+    return lista;
   });
 
   ngOnInit() {
@@ -59,53 +69,49 @@ export class ExerciseCatalogComponent implements OnInit {
     this.cargarCategorias();
   }
 
- cargarEjercicios() {
-  this.cargando.set(true);
+  cargarEjercicios() {
+    this.cargando.set(true);
+    this.imagenesConError.set(new Set());
 
-  if (this.fuenteSeleccionada() === 'local') {
-
-    this.exerciseService.getAllExercises().subscribe({
-      next: (data: Exercise[]) => {
-        this.ejercicios.set(data);
-        this.cargando.set(false);
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-        this.cargando.set(false);
-      }
-    });
-
-  } else {
-
-    // ✅ AQUÍ VA EL CÓDIGO QUE TE DI
-    this.exerciseService.getWgerExercises().subscribe({
-      next: (data: Exercise[]) => {
-        this.ejercicios.set(data);
-        this.cargando.set(false);
-      },
-      error: (err: any) => {
-        console.error('Error Wger:', err);
-        this.cargando.set(false);
-      }
-    });
-
+    if (this.fuenteSeleccionada() === 'local') {
+      this.exerciseService.getAllExercises().subscribe({
+        next: (data: Exercise[]) => {
+          console.log('Ejercicios locales cargados:', data.length);
+          this.ejercicios.set(data);
+          this.cargando.set(false);
+        },
+        error: (err: any) => {
+          console.error('Error cargando locales:', err);
+          this.cargando.set(false);
+        }
+      });
+    } else {
+      this.exerciseService.getWgerExercises().subscribe({
+        next: (data: Exercise[]) => {
+          console.log('Ejercicios Wger cargados:', data.length);
+          this.ejercicios.set(data);
+          this.cargando.set(false);
+        },
+        error: (err: any) => {
+          console.error('Error cargando Wger:', err);
+          this.cargando.set(false);
+        }
+      });
+    }
   }
-}
 
   cargarCategorias() {
     this.exerciseService.getCategories().subscribe({
       next: (data: string[]) => this.categorias.set(data),
-      error: (err) => console.error('Error cargando categorías:', err)
+      error: (err: any) => console.error('Error cargando categorías:', err)
     });
   }
 
-  // Cambiar fuente de ejercicios
   cambiarFuente(fuente: string) {
     this.fuenteSeleccionada.set(fuente as 'local' | 'wger');
     this.cargarEjercicios();
   }
 
-  // Método para obtener el color según el nivel
   getColorNivel(nivel: string): string {
     switch (nivel) {
       case 'beginner': return '#4CAF50';
@@ -113,5 +119,42 @@ export class ExerciseCatalogComponent implements OnInit {
       case 'expert': return '#F44336';
       default: return '#9E9E9E';
     }
+  }
+
+  onImageError(exerciseId: string) {
+    this.imagenesConError.update(set => {
+      const newSet = new Set(set);
+      newSet.add(exerciseId);
+      return newSet;
+    });
+  }
+
+  showPlaceholder(exerciseId: string): boolean {
+    return this.imagenesConError().has(exerciseId);
+  }
+
+  getImageUrl(ejercicio: Exercise): string {
+    if (this.showPlaceholder(ejercicio.id || '')) {
+      return '';
+    }
+
+    if (this.fuenteSeleccionada() === 'local' && ejercicio.images && ejercicio.images.length > 0) {
+      return `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${ejercicio.images[0]}`;
+    }
+
+    if (this.fuenteSeleccionada() === 'wger' && ejercicio.imageUrl) {
+      return ejercicio.imageUrl;
+    }
+
+    return '';
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '💪';
+    const words = name.split(' ');
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return (words[0][0] + words[1][0]).toUpperCase();
   }
 }

@@ -1,9 +1,13 @@
-<div class="detalle-container">
-  <button class="btn-volver" (click)="volverAlCatalogo()">
-    <i class="bi bi-arrow-left"></i> Volver al catálogo
-  </button>
+<div class="contenedor-detalle">
 
-  <!-- Cargando -->
+  <!-- Botón volver -->
+  <div class="volver">
+    <button class="btn-volver" routerLink="/exercises/catalog">
+      <i class="bi bi-arrow-left"></i> Volver al catálogo
+    </button>
+  </div>
+
+  <!-- Loading -->
   @if (cargando()) {
     <div class="cargando">
       <div class="spinner"></div>
@@ -12,91 +16,102 @@
   }
 
   <!-- Error -->
-  @if (error() && !cargando()) {
+  @if (error()) {
     <div class="error">
       <i class="bi bi-exclamation-triangle"></i>
       <p>{{ error() }}</p>
+      <button class="btn-reintentar" routerLink="/exercises/catalog">
+        Volver al catálogo
+      </button>
     </div>
   }
 
   <!-- Detalle del ejercicio -->
-  @if (ejercicio() && !cargando() && !error()) {
-    <div class="ejercicio-detalle">
-      <!-- Cabecera -->
-      <div class="cabecera">
-        <h1>{{ ejercicio()?.name }}</h1>
-        <div class="badges">
-          @if (ejercicio()?.level) {
-            <span class="nivel-badge" [style.background]="getColorNivel(ejercicio()?.level)">
-              {{ ejercicio()?.level }}
-            </span>
+  @if (!cargando() && !error() && ejercicio()) {
+    <div class="detalle-ejercicio">
+
+      <!-- Header con imagen -->
+      <div class="header-ejercicio">
+        <div class="imagen-principal">
+          @if (getImageUrl() && !imagenError()) {
+            <img
+              [src]="getImageUrl()"
+              [alt]="ejercicio()!.name"
+              (error)="onImageError()">
+          } @else {
+            <div class="placeholder-imagen-grande">
+              <i class="bi bi-person-arms-up"></i>
+              <span>{{ ejercicio()!.name.charAt(0) }}</span>
+            </div>
           }
-          @if (ejercicio()?.category) {
-            <span class="categoria-badge">
-              <i class="bi bi-tag"></i> {{ ejercicio()?.category }}
-            </span>
-          }
+        </div>
+
+        <div class="info-header">
+          <h1>{{ ejercicio()!.name }}</h1>
+
+          <div class="badges">
+            @if (ejercicio()!.level) {
+              <span class="badge-nivel" [style.background]="getLevelColor(ejercicio()!.level!)">
+                {{ getLevelName(ejercicio()!.level!) }}
+              </span>
+            }
+            @if (ejercicio()!.category) {
+              <span class="badge-categoria">
+                {{ getCategoryName(ejercicio()!.category!) }}
+              </span>
+            }
+          </div>
+
+          <div class="info-rapida">
+            @if (ejercicio()!.equipment) {
+              <div class="info-item">
+                <i class="bi bi-tools"></i>
+                <span>Equipamiento: {{ getEquipmentName(ejercicio()!.equipment!) }}</span>
+              </div>
+            }
+            @if (ejercicio()!.primaryMuscles && ejercicio()!.primaryMuscles!.length > 0) {
+              <div class="info-item">
+                <i class="bi bi-muscle"></i>
+                <span>Músculos principales: {{ ejercicio()!.primaryMuscles!.join(', ') }}</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
 
-      <div class="grid-detalle">
-<!-- Columna izquierda - Instrucciones -->
-<div class="info-principal">
-  <div class="seccion">
-    <h3><i class="bi bi-list-check"></i> Instrucciones</h3>
-    <div class="instrucciones-lista">
-      @if (ejercicio()?.instructions?.length) {
-        @for (instruccion of ejercicio()?.instructions; track $index) {
-          <p class="instruccion-item">{{ $index + 1 }}. {{ instruccion }}</p>
-        }
-      } @else {
-        <p class="instrucciones">{{ ejercicio()?.instructions?.[0]?.substring(0, 80) || 'Sin instrucciones' }}...</p>
+      <!-- Descripción -->
+      @if (ejercicio()!.description) {
+        <div class="seccion">
+          <h2><i class="bi bi-file-text"></i> Descripción</h2>
+          <div class="descripcion" [innerHTML]="ejercicio()!.description"></div>
+        </div>
       }
-    </div>
-  </div>
-</div>
 
-        <!-- Columna derecha - Información adicional -->
-        <div class="info-adicional">
-          <!-- Equipamiento -->
-          <div class="tarjeta-info">
-            <h4><i class="bi bi-tools"></i> Equipamiento necesario</h4>
-            <p class="equipamiento-valor">
-              {{ ejercicio()?.equipment || 'Sin equipamiento' }}
-            </p>
-          </div>
-
-          <!-- Músculos principales -->
-          <div class="tarjeta-info">
-            <h4><i class="bi bi-bullseye"></i> Músculos principales</h4>
-            <ul>
-              @for (musculo of ejercicio()?.primaryMuscles; track musculo) {
-                <li>{{ musculo }}</li>
-              }
-            </ul>
-          </div>
-
-          <!-- Músculos secundarios -->
-          @if (ejercicio()?.secondaryMuscles?.length) {
-            <div class="tarjeta-info">
-              <h4><i class="bi bi-diagram-3"></i> Músculos secundarios</h4>
-              <ul>
-                @for (musculo of ejercicio()?.secondaryMuscles; track musculo) {
-                  <li>{{ musculo }}</li>
-                }
-              </ul>
-            </div>
-          }
-
-          <!-- Tipo de fuerza -->
-          @if (ejercicio()?.force) {
-            <div class="tarjeta-info">
-              <h4><i class="bi bi-lightning"></i> Tipo de fuerza</h4>
-              <p>{{ ejercicio()?.force }}</p>
-            </div>
-          }
+      <!-- Instrucciones -->
+      @if (ejercicio()!.instructions && ejercicio()!.instructions!.length > 0) {
+        <div class="seccion">
+          <h2><i class="bi bi-list-check"></i> Instrucciones</h2>
+          <ol class="instrucciones-lista">
+            @for (instruccion of ejercicio()!.instructions; track $index) {
+              <li>{{ instruccion }}</li>
+            }
+          </ol>
         </div>
-      </div>
+      }
+
+      <!-- Músculos secundarios -->
+      @if (ejercicio()!.secondaryMuscles && ejercicio()!.secondaryMuscles!.length > 0) {
+        <div class="seccion">
+          <h2><i class="bi bi-grid-3x3-gap-fill"></i> Músculos secundarios</h2>
+          <div class="etiquetas-container">
+            @for (musculo of ejercicio()!.secondaryMuscles; track musculo) {
+              <span class="etiqueta-musculo">{{ musculo }}</span>
+            }
+          </div>
+        </div>
+      }
+
+     
     </div>
   }
 </div>

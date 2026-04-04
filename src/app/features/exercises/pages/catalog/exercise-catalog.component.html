@@ -1,16 +1,17 @@
 <div class="contenedor-catalogo">
+
   <!-- Encabezado -->
   <div class="encabezado">
     <h1>🏋️ Catálogo de Ejercicios</h1>
-    <p>Explora {{ ejercicios().length }} ejercicios con instrucciones detalladas</p>
+    <p>Explora {{ ejerciciosFiltrados().length }} ejercicios con instrucciones detalladas</p>
   </div>
 
   <!-- Selector de fuente -->
   <div class="selector-fuente">
     <label>Fuente de ejercicios:</label>
     <select (change)="cambiarFuente($any($event.target).value)">
-      <option value="local">Base de datos local (166 ejercicios)</option>
-      <option value="wger">Wger API (con imágenes)</option>
+      <option value="local">Base de datos local</option>
+      <option value="wger">Wger</option>
     </select>
   </div>
 
@@ -31,7 +32,7 @@
     <select class="selector-filtro" (change)="nivelSeleccionado.set($any($event.target).value)">
       <option value="todos">Todos los niveles</option>
       @for (nivel of niveles(); track nivel) {
-      <option [value]="nivel">{{ nivel }}</option>
+      <option [value]="nivel">{{ nivel === 'beginner' ? 'Principiante' : nivel === 'intermediate' ? 'Intermedio' : 'Experto' }}</option>
       }
     </select>
   </div>
@@ -49,34 +50,27 @@
   <div class="grid-ejercicios">
     @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
     <div class="tarjeta-ejercicio">
-      <!-- Imagen para fuente LOCAL -->
-      @if (fuenteSeleccionada() === 'local' && ejercicio.images && ejercicio.images.length > 0) {
-      <div class="contenedor-imagen">
-        <img [src]="'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + ejercicio.images[0]"
-          [alt]="ejercicio.name" class="imagen-ejercicio" loading="lazy" (error)="ejercicio.images = []">
-      </div>
-      }
 
-      <!-- Imagen para fuente WGER -->
-      @if (fuenteSeleccionada() === 'wger' && ejercicio.imageUrl) {
+      <!-- SECCIÓN DE IMAGEN -->
       <div class="contenedor-imagen">
-        <img [src]="ejercicio.imageUrl" [alt]="ejercicio.name" class="imagen-ejercicio" loading="lazy"
-          (error)="ejercicio.imageUrl = null">
-        <ng-template #sinImagen>
-          <img src="assets/no-image.png">
-        </ng-template>
+        @if (getImageUrl(ejercicio) && !showPlaceholder(ejercicio.id || '')) {
+          <img
+            [src]="getImageUrl(ejercicio)"
+            [alt]="ejercicio.name"
+            class="imagen-ejercicio"
+            loading="lazy"
+            (error)="onImageError(ejercicio.id || '')">
+        } @else {
+          <div class="placeholder-imagen">
+            <div class="icono-ejercicio">
+              <i class="bi bi-person-arms-up"></i>
+            </div>
+            <div class="nombre-abreviado">
+              {{ getInitials(ejercicio.name) }}
+            </div>
+          </div>
+        }
       </div>
-      }
-
-      <!-- Si no hay imagen, muestra un placeholder -->
-      @if (!ejercicio.images?.length && !ejercicio.imageUrl) {
-      <div class="contenedor-imagen sin-imagen">
-        <div class="placeholder">
-          <i class="bi bi-image"></i>
-          <span>Sin imagen</span>
-        </div>
-      </div>
-      }
 
       <div class="cabecera-tarjeta">
         <h3>{{ ejercicio.name }}</h3>
@@ -98,10 +92,12 @@
           }
         </div>
 
-        <!-- Instrucciones-->
-        <p class="instrucciones"
-          [innerHTML]="(ejercicio.description || ejercicio.instructions?.[0] || 'Sin instrucciones') | slice:0:100">
+        <p class="instrucciones">
+          {{ (ejercicio.description || ejercicio.instructions?.[0] || 'Sin instrucciones')
+             .replace(/<[^>]+>/g, '')
+             | slice:0:100 }}
         </p>
+
         <div class="info-adicional">
           @if (ejercicio.equipment && ejercicio.equipment !== 'body only') {
           <span class="equipamiento">
