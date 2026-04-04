@@ -2,14 +2,20 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth  = inject(AuthService);
+  const auth = inject(AuthService);
   const token = auth.getToken();
-// Ahora permite localhost O tu nuevo backend en Render
-// OPCIÓN RECOMENDADA (Copia y pega esto para no fallar)
-if (token && req.url.includes('gym-backend-xwat.onrender.com')) {
+
+  // Si hay token y la URL es de nuestro backend en Render, lo añadimos
+  if (token && req.url.includes('gym-backend-xwat.onrender.com')) {
     return next(req.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     }));
-}
+  }
+
+  // Si no se cumple lo anterior, enviamos la petición tal cual
+  return next(req);
 };
