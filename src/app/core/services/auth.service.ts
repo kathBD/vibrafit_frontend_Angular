@@ -20,7 +20,7 @@ export class AuthService {
   private http   = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly API       = 'http://localhost:8080/api/auth';
+  private readonly API       = 'https://gym-backend-xwat.onrender.com/api/auth/login';
   private readonly TOKEN_KEY = 'vf_token';
   private readonly USER_KEY  = 'vf_user';
 

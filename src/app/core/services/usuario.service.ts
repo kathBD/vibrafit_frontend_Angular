@@ -39,7 +39,7 @@ export class UsuarioService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  private readonly API = 'http://localhost:8080/api/usuarios';
+  private readonly API = 'https://gym-backend-xwat.onrender.com/api/usuarios';
 
   private headers(): HttpHeaders {
     return new HttpHeaders({

@@ -22,7 +22,7 @@ export interface Exercise {
 })
 export class ExerciseService {
 
-  private apiBase = 'http://localhost:8080/api';
+  private apiBase = 'https://gym-backend-xwat.onrender.com/api';
   private apiUrl = `${this.apiBase}/exercises`;
 
   constructor(
