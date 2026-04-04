@@ -223,6 +223,54 @@ npm install bootstrap bootstrap-icons zone.js
 | `/exercises/catalog` | Catálogo | auth |
 
 ---
+# 🚀 Guía de Contenerización: VibraFit App
+
+Este proyecto utiliza Docker y Docker Compose para estandarizar el entorno de desarrollo y simplificar el despliegue.
+
+---
+
+## 🏗️ Arquitectura de Contenedores
+
+El sistema está compuesto por tres servicios principales conectados a través de una red privada (`gym-network`):
+
+- **🗄️ Base de Datos (`gym_db`)**  
+  MySQL 8.0 con persistencia mediante volumen local.
+
+- **⚙️ Backend (`gym_backend`)**  
+  API desarrollada con Spring Boot, configurada para esperar a que la base de datos esté disponible (healthcheck).
+
+- **🌐 Frontend (`gym_frontend`)**  
+  Aplicación Angular servida mediante Nginx usando multi-stage build.
+
+---
+
+## 🛠️ Requisitos Previos
+
+- Docker Desktop (v20.10+)
+- Docker Compose (v2.0+)
+
+---
+
+## ⚡ Instrucciones de Despliegue
+
+### 1. 📁 Preparación
+
+Ubícate en la raíz del proyecto (donde está el archivo `docker-compose.yml`).
+
+---
+
+### 2. 🧱 Construcción y Ejecución
+
+```bash
+docker compose up -d --build
+
+| Servicio      | URL                                            | Puerto Interno |
+| ------------- | ---------------------------------------------- | -------------- |
+| Frontend      | [http://localhost:4200](http://localhost:4200) | 80 (Nginx)     |
+| Backend API   | [http://localhost:8080](http://localhost:8080) | 8080           |
+| Base de Datos | localhost:3307                                 | 3306           |
+
+
 
 ## 👩‍💻 Desarrollado por
 
