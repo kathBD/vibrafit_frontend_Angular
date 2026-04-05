@@ -1,26 +1,22 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-
-
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // 1. Obtener el token de forma manual y segura
-  const token = localStorage.getItem('token');
+  // 1. Obtener el token directamente del localStorage (Cero inyecciones de servicios)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  // 2. Definir la URL de tu backend
-  const backendUrl = 'gym-backend-xwat.onrender.com';
+  // 2. Si es login o registro, dejar pasar SIN TOCAR NADA
+  if (req.url.includes('/api/auth/')) {
+    return next(req);
+  }
 
-  // 3. Si la petición NO es de login y tenemos token, clonamos
-  if (!req.url.includes('/api/auth/') && token && req.url.includes(backendUrl)) {
+  // 3. Si hay un token guardado, clonamos la petición
+  if (token) {
     const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: req.headers.set('Authorization', `Bearer ${token}`)
     });
     return next(cloned);
   }
 
-  // 4. Si no, pasa la petición tal cual
+  // 4. Si no hay token, enviar la petición original
   return next(req);
 };
