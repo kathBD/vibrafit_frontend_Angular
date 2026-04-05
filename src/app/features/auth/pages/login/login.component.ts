@@ -35,23 +35,29 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-    const { correo, password } = this.loginForm.value;
-    this.auth.login({ correo: correo!, password: password! }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.auth.redirectByRole();
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        if      (err.status === 401) this.errorMessage.set('Correo o contraseña incorrectos.');
-        else if (err.status === 403) this.errorMessage.set('Usuario inactivo o sin acceso.');
-        else                         this.errorMessage.set('No se pudo conectar con el servidor.');
-      }
-    });
-  }
+  if (this.loginForm.invalid) return;
+  this.isLoading.set(true);
+  this.errorMessage.set('');
+  
+  const { correo, password } = this.loginForm.value;
+  
+  this.auth.login({ correo: correo!, password: password! }).subscribe({
+    next: (response) => { // Añadimos 'response' para ver qué llega
+      this.isLoading.set(false);
+      console.log('Respuesta del servidor:', response);
+      console.log('¡Login exitoso! Detuvimos la redirección para probar.');
+      
+      // COMENTA ESTA LÍNEA TEMPORALMENTE
+      // this.auth.redirectByRole(); 
+      
+      alert('¡Login exitoso! Mira la consola (F12)');
+    },
+    error: (err) => {
+      this.isLoading.set(false);
+      // ... resto de tu código de error
+    }
+  });
+ }
 
   togglePassword(): void {
     this.showPassword.update(v => !v);
