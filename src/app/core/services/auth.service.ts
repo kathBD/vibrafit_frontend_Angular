@@ -32,7 +32,8 @@ export class AuthService {
   rolNormalizado  = computed(() => {
     const rol = this.userRole();
     if (!rol) return '';
-    return rol === 'ADMINISTRADOR' ? 'ADMIN' : rol;
+  if (rol === 'ADMINISTRADOR') return 'ADMIN'; // Forzamos que sea ADMIN
+  return rol;
   });
 
   login(credentials: LoginRequest) {
@@ -58,7 +59,7 @@ export class AuthService {
 
   redirectByRole(): void {
     const rol = this.rolNormalizado();
-    if      (rol === 'ADMINISTRADOR')  this.router.navigate(['/admin/dashboard']);
+    if      (rol === 'ADMIN')  this.router.navigate(['/admin/dashboard']);
     else if (rol === 'ENTRENADOR') this.router.navigate(['/trainer/dashboard']);
     else                           this.router.navigate(['/client/dashboard']);
   }
