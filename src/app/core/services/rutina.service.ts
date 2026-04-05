@@ -1,0 +1,80 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
+
+export interface EjercicioRutina {
+  ejercicioRutinaId?: number;
+  exercise: { id: string; name: string };
+  series: number;
+  repeticiones: number;
+  peso: number;
+  orden: number;
+  descanso: number;
+}
+
+export interface Rutina {
+  rutinaId?: number;
+  nombre: string;
+  descripcion: string;
+  activo: boolean;
+  fechaCreacion?: Date;
+  fechaModificacion?: Date;
+  creador?: { usuarioId: number; nombre: string };
+  cliente?: { usuarioId: number; nombre: string };
+  ejercicios?: EjercicioRutina[];
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RutinaService {
+  private apiUrl = 'http://localhost:8080/api/rutinas';
+
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService
+  ) {}
+
+  private getHeaders() {
+    return { 'Authorization': `Bearer ${this.auth.getToken()}` };
+  }
+
+  // ========== CRUD RUTINAS ==========
+  
+  crearRutina(rutina: Rutina): Observable<Rutina> {
+    return this.http.post<Rutina>(this.apiUrl, rutina, { headers: this.getHeaders() });
+  }
+
+  listarTodas(): Observable<Rutina[]> {
+    return this.http.get<Rutina[]>(this.apiUrl, { headers: this.getHeaders() });
+  }
+
+  obtenerPorId(id: number): Observable<Rutina> {
+    return this.http.get<Rutina>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
+  obtenerPorCreador(creadorId: number): Observable<Rutina[]> {
+    return this.http.get<Rutina[]>(`${this.apiUrl}/creador/${creadorId}`, { headers: this.getHeaders() });
+  }
+
+  obtenerPorCliente(clienteId: number): Observable<Rutina[]> {
+    return this.http.get<Rutina[]>(`${this.apiUrl}/cliente/${clienteId}`, { headers: this.getHeaders() });
+  }
+
+  obtenerMisRutinas(): Observable<Rutina[]> {
+    return this.http.get<Rutina[]>(`${this.apiUrl}/mis-rutinas`, { headers: this.getHeaders() });
+  }
+
+  actualizarRutina(id: number, rutina: Rutina): Observable<Rutina> {
+    return this.http.put<Rutina>(`${this.apiUrl}/${id}`, rutina, { headers: this.getHeaders() });
+  }
+
+  eliminarRutina(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
+  asignarACliente(rutinaId: number, clienteId: number): Observable<Rutina> {
+    return this.http.put<Rutina>(`${this.apiUrl}/${rutinaId}/asignar-cliente/${clienteId}`, null, { headers: this.getHeaders() });
+  }
+}

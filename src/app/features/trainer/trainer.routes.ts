@@ -1,4 +1,3 @@
-// src/app/features/trainer/trainer.routes.ts
 import { Routes } from '@angular/router';
 import { DashboardTrainerComponent } from './pages/dashboard/dashboard-trainer.component';
 
@@ -11,10 +10,12 @@ export const TRAINER_ROUTES: Routes = [
     path: 'clientes',
     loadComponent: () => import('./pages/client-list/client-list').then(m => m.ClientListComponent)
   },
-  {
-    path: 'rutinas',
-    loadComponent: () => import('./pages/routines/routines').then(m => m.Routines)
-  },
+  
+   {
+  path: 'rutinas',
+  loadComponent: () => import('./pages/routines/routines.component').then(m => m.RoutinesComponent)
+},
+  
   {
     path: 'rutinas/nueva',
     loadComponent: () => import('./pages/routine-form/routine-form').then(m => m.RoutineForm)
