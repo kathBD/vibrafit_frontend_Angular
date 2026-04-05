@@ -1,22 +1,27 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // 1. Obtener el token directamente del localStorage (Cero inyecciones de servicios)
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-  // 2. Si es login o registro, dejar pasar SIN TOCAR NADA
-  if (req.url.includes('/api/auth/')) {
+  // 1. Evitar SSR (Renderizado en servidor) que a veces rompe Netlify
+  if (typeof window === 'undefined') {
     return next(req);
   }
 
-  // 3. Si hay un token guardado, clonamos la petición
-  if (token) {
-    const cloned = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
-    });
-    return next(cloned);
+  const token = localStorage.getItem('token');
+  const isAuthRequest = req.url.includes('/api/auth/');
+
+  // 2. REGLA DE ORO: Si es login/register O ya tiene el header, NO TOCAR
+  if (isAuthRequest || req.headers.has('Authorization')) {
+    return next(req);
   }
 
-  // 4. Si no hay token, enviar la petición original
+  // 3. Si tenemos token y NO es una petición de auth, lo ponemos
+  if (token) {
+    const authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${token}`)
+    });
+    return next(authReq);
+  }
+
+  // 4. Por defecto, pasar la petición original
   return next(req);
 };
