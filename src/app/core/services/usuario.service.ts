@@ -18,7 +18,6 @@ export interface Usuario {
   peso?:           number;
   estatura?:       number;
   activo?:         boolean;      // ← Para uso interno
-  esta_activo?:    boolean;      // ← Para enviar al backend
   especialidad?:   string;
   horarioInicio?:  string;
   horarioFin?:     string;
@@ -93,7 +92,7 @@ export class UsuarioService {
       especialidad: usuario.especialidad || "",
       horarioInicio: usuario.horarioInicio || "",
       horarioFin: usuario.horarioFin || "",
-      esta_activo: usuario.activo !== undefined ? usuario.activo : true,  // ← CLAVE: convertir activo a esta_activo
+      activo: usuario.activo !== undefined ? usuario.activo : true,  // ← CLAVE: convertir activo a esta_activo
       // CORRECCIÓN 2: Ya no quemamos el 1. Usamos el ID que viene del objeto
       rol: {
         rolId: usuario.rol?.rolId 
