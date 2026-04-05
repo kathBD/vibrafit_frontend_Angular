@@ -45,30 +45,30 @@ export class LoginComponent implements OnInit, OnDestroy {
     next: (response: any) => {
       this.isLoading.set(false);
       
-      // 1. Guardar el token (esto es vital para que el interceptor funcione después)
       if (response && response.token) {
         localStorage.setItem('token', response.token);
       }
 
-      // 2. Lógica de redirección basada en el rol exacto
-      // IMPORTANTE: Asegúrate de que 'response.role' sea el campo correcto 
-      // (mira tu consola F12 para confirmar si es .role, .rol o .authority)
+      // El rol que viene del backend (según lo que me dijiste)
       const userRole = response.role; 
+      console.log('Rol detectado:', userRole);
 
-      console.log('Rol recibido:', userRole);
-
-      if (userRole === 'ADMINISTRADOR') {
-        console.log('Navegando a Admin...');
-        this.router.navigate(['/admin']); // Cambia por tu ruta real de admin
+      // Mapeo de rutas según tus archivos:
+      if (userRole === 'ADMINISTRADOR' || userRole === 'ADMIN') {
+        this.router.navigate(['/admin']);
+      } else if (userRole === 'ENTRENADOR') {
+        this.router.navigate(['/trainer']);
+      } else if (userRole === 'CLIENTE') {
+        this.router.navigate(['/client']);
       } else {
-        console.log('Navegando a Usuario/Home...');
-        this.router.navigate(['/home']); // Ruta para usuarios normales
+        // Si no es ninguno de los anteriores, vamos a la raíz
+        this.router.navigate(['/']);
       }
     },
     error: (err) => {
       this.isLoading.set(false);
       if (err.status === 401) this.errorMessage.set('Correo o contraseña incorrectos.');
-      else this.errorMessage.set('Error en la conexión con el servidor.');
+      else this.errorMessage.set('Error de conexión con el servidor.');
     }
   });
 }
