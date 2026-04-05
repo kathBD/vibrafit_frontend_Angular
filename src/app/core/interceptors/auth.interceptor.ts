@@ -3,24 +3,24 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  //const auth = inject(AuthService);
-  //const token = auth.getToken();
-  const token = localStorage.getItem('token');  // Si hay token y la URL es de nuestro backend en Render, lo añadimos
-  
-  if (req.url.includes('/api/auth/')) {
-    return next(req);
-  }
 
-  if (token && req.url.includes('gym-backend-xwat.onrender.com')) {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // 1. Obtener el token de forma manual y segura
+  const token = localStorage.getItem('token');
+
+  // 2. Definir la URL de tu backend
+  const backendUrl = 'gym-backend-xwat.onrender.com';
+
+  // 3. Si la petición NO es de login y tenemos token, clonamos
+  if (!req.url.includes('/api/auth/') && token && req.url.includes(backendUrl)) {
     const cloned = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
-  return next(cloned);
+    return next(cloned);
   }
 
-  // Si no se cumple lo anterior, enviamos la petición tal cual
+  // 4. Si no, pasa la petición tal cual
   return next(req);
 };
