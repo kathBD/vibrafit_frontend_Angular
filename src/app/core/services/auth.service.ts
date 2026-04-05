@@ -58,7 +58,7 @@ export class AuthService {
 
   redirectByRole(): void {
     const rol = this.rolNormalizado();
-    if      (rol === 'ADMIN')      this.router.navigate(['/admin/dashboard']);
+    if      (rol === 'ADMINISTRADOR')  this.router.navigate(['/admin/dashboard']);
     else if (rol === 'ENTRENADOR') this.router.navigate(['/trainer/dashboard']);
     else                           this.router.navigate(['/client/dashboard']);
   }

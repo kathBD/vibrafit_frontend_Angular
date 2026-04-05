@@ -42,22 +42,36 @@ export class LoginComponent implements OnInit, OnDestroy {
   const { correo, password } = this.loginForm.value;
   
   this.auth.login({ correo: correo!, password: password! }).subscribe({
-    next: (response) => { // Añadimos 'response' para ver qué llega
+    next: (response: any) => {
       this.isLoading.set(false);
-      console.log('Respuesta del servidor:', response);
-      console.log('¡Login exitoso! Detuvimos la redirección para probar.');
       
-      // COMENTA ESTA LÍNEA TEMPORALMENTE
-      // this.auth.redirectByRole(); 
-      
-      alert('¡Login exitoso! Mira la consola (F12)');
+      // 1. Guardar el token (esto es vital para que el interceptor funcione después)
+      if (response && response.token) {
+        localStorage.setItem('token', response.token);
+      }
+
+      // 2. Lógica de redirección basada en el rol exacto
+      // IMPORTANTE: Asegúrate de que 'response.role' sea el campo correcto 
+      // (mira tu consola F12 para confirmar si es .role, .rol o .authority)
+      const userRole = response.role; 
+
+      console.log('Rol recibido:', userRole);
+
+      if (userRole === 'ADMINISTRADOR') {
+        console.log('Navegando a Admin...');
+        this.router.navigate(['/admin']); // Cambia por tu ruta real de admin
+      } else {
+        console.log('Navegando a Usuario/Home...');
+        this.router.navigate(['/home']); // Ruta para usuarios normales
+      }
     },
     error: (err) => {
       this.isLoading.set(false);
-      // ... resto de tu código de error
+      if (err.status === 401) this.errorMessage.set('Correo o contraseña incorrectos.');
+      else this.errorMessage.set('Error en la conexión con el servidor.');
     }
   });
- }
+}
 
   togglePassword(): void {
     this.showPassword.update(v => !v);
