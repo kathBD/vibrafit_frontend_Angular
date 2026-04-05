@@ -55,16 +55,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       console.log('Rol detectado con éxito:', userRole);
 
       // 3. Redirección basada en el nombre exacto
-      if (userRole === 'ADMINISTRADOR') {
-        this.router.navigate(['/admin/dashboard']);
-      } else if (userRole === 'ENTRENADOR') {
-        this.router.navigate(['/trainer/dashboard']);
-      } else if (userRole === 'CLIENTE') {
-        this.router.navigate(['/client/dashboard']);
-      } else {
-        // Si algo falla, al menos que vaya al home y no se quede en blanco
-        this.router.navigate(['/']);
-      }
+     if      (userRole === 'ADMINISTRADOR')  this.router.navigate(['/admin/dashboard']);
+     else if (userRole === 'ENTRENADOR') this.router.navigate(['/trainer/dashboard']);
+     else                           this.router.navigate(['/client/dashboard']);
     },
     error: (err) => {
       this.isLoading.set(false);
