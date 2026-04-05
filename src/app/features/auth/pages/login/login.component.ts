@@ -34,43 +34,44 @@ export class LoginComponent implements OnInit, OnDestroy {
     document.body.classList.remove('login-page');
   }
 
-  onSubmit(): void {
-    if (this.loginForm.invalid) return;
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-    
-    const { correo, password } = this.loginForm.value;
-    
-    this.auth.login({ correo: correo!, password: password! }).subscribe({
-      next: (response: any) => {
-        this.isLoading.set(false);
-        
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
-        }
-
-        // Usamos el rol que confirmaste
-        const userRole = response.role; 
-        console.log('Rol detectado:', userRole);
-
-        // Mapeo de rutas según tu archivo de rutas
-        if (userRole === 'ADMINISTRADOR' || userRole === 'ADMIN') {
-          this.router.navigate(['/admin']);
-        } else if (userRole === 'ENTRENADOR') {
-          this.router.navigate(['/trainer']);
-        } else if (userRole === 'CLIENTE') {
-          this.router.navigate(['/client']);
-        } else {
-          this.router.navigate(['/']);
-        }
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        if (err.status === 401) this.errorMessage.set('Correo o contraseña incorrectos.');
-        else this.errorMessage.set('No se pudo conectar con el servidor.');
+ onSubmit(): void {
+  if (this.loginForm.invalid) return;
+  this.isLoading.set(true);
+  
+  const { correo, password } = this.loginForm.value;
+  
+  this.auth.login({ correo: correo!, password: password! }).subscribe({
+    next: (res: any) => {
+      this.isLoading.set(false);
+      
+      // 1. Guardar el token (vf_token es el nombre que usa tu AuthService)
+      if (res.token) {
+        localStorage.setItem('vf_token', res.token);
       }
-    });
-  }
+
+      // 2. EXTRAER EL ROL CORRECTAMENTE
+      // Navegamos por el objeto: res -> usuario -> rol -> nombre
+      const userRole = res.usuario?.rol?.nombre;
+      console.log('Rol detectado con éxito:', userRole);
+
+      // 3. Redirección basada en el nombre exacto
+      if (userRole === 'ADMINISTRADOR') {
+        this.router.navigate(['/admin/dashboard']);
+      } else if (userRole === 'ENTRENADOR') {
+        this.router.navigate(['/trainer/dashboard']);
+      } else if (userRole === 'CLIENTE') {
+        this.router.navigate(['/client/dashboard']);
+      } else {
+        // Si algo falla, al menos que vaya al home y no se quede en blanco
+        this.router.navigate(['/']);
+      }
+    },
+    error: (err) => {
+      this.isLoading.set(false);
+      this.errorMessage.set(err.status === 401 ? 'Credenciales inválidas' : 'Error de conexión');
+    }
+  });
+}
 
   togglePassword(): void {
     this.showPassword.update(v => !v);
