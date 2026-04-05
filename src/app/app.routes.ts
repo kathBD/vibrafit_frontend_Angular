@@ -13,7 +13,8 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard, roleGuard(['ADMIN'])],
+    // Le decimos al guardia que acepte AMBAS palabras, así no hay forma de que falle
+    canActivate: [authGuard, roleGuard(['ADMIN', 'ADMINISTRADOR'])], 
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
   {

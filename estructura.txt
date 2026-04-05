@@ -1,0 +1,160 @@
+.
+├── angular.json
+├── Dockerfile
+├── estructura.txt
+├── package.json
+├── package-lock.json
+├── public
+│   ├── assets
+│   │   └── images
+│   │       ├── admin.jpg
+│   │       ├── entrenador.png
+│   │       ├── fitnessgym.jpg
+│   │       ├── fuerza.jpg
+│   │       ├── gym.jpg
+│   │       ├── login.jpg
+│   │       ├── logo.jpg
+│   │       └── trainner.jpg
+│   └── favicon.ico
+├── README.md
+├── src
+│   ├── app
+│   │   ├── app.component.ts
+│   │   ├── app.config.ts
+│   │   ├── app.html
+│   │   ├── app.routes.ts
+│   │   ├── app.scss
+│   │   ├── app.spec.ts
+│   │   ├── app.ts
+│   │   ├── core
+│   │   │   ├── guards
+│   │   │   │   ├── auth.guard.ts
+│   │   │   │   └── role.guard.ts
+│   │   │   ├── interceptors
+│   │   │   │   └── auth.interceptor.ts
+│   │   │   ├── models
+│   │   │   │   ├── auth.model.ts
+│   │   │   │   ├── ejercicio.model.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── rutina.model.ts
+│   │   │   │   └── usuario.model.ts
+│   │   │   └── services
+│   │   │       ├── auth.service.ts
+│   │   │       ├── exercise.service.ts
+│   │   │       └── usuario.service.ts
+│   │   ├── features
+│   │   │   ├── admin
+│   │   │   │   ├── admin.routes.ts
+│   │   │   │   └── pages
+│   │   │   │       ├── dashboard
+│   │   │   │       │   ├── dashboard-admin.component.html
+│   │   │   │       │   ├── dashboard-admin.component.scss
+│   │   │   │       │   └── dashboard-admin.component.ts
+│   │   │   │       ├── membresias
+│   │   │   │       │   ├── membresias.html
+│   │   │   │       │   ├── membresias.scss
+│   │   │   │       │   ├── membresias.spec.ts
+│   │   │   │       │   └── membresias.ts
+│   │   │   │       ├── notificaciones
+│   │   │   │       │   ├── notificaciones.html
+│   │   │   │       │   ├── notificaciones.scss
+│   │   │   │       │   └── notificaciones.ts
+│   │   │   │       ├── rutinas
+│   │   │   │       │   ├── rutinas.html
+│   │   │   │       │   ├── rutinas.scss
+│   │   │   │       │   └── rutinas.ts
+│   │   │   │       └── user-management
+│   │   │   │           ├── user-management.component.html
+│   │   │   │           ├── user-management.component.scss
+│   │   │   │           └── user-management.component.ts
+│   │   │   ├── auth
+│   │   │   │   ├── auth.routes.ts
+│   │   │   │   └── pages
+│   │   │   │       ├── login
+│   │   │   │       │   ├── login.component.html
+│   │   │   │       │   ├── login.component.scss
+│   │   │   │       │   └── login.component.ts
+│   │   │   │       └── user-list
+│   │   │   │           ├── user-list.component.html
+│   │   │   │           └── user-list.component.ts
+│   │   │   ├── client
+│   │   │   │   ├── client.routes.ts
+│   │   │   │   └── pages
+│   │   │   │       └── dashboard
+│   │   │   │           ├── dashboard-client.component.html
+│   │   │   │           ├── dashboard-client.component.scss
+│   │   │   │           └── dashboard-client.component.ts
+│   │   │   ├── exercises
+│   │   │   │   ├── exercises.routes.ts
+│   │   │   │   └── pages
+│   │   │   │       ├── catalog
+│   │   │   │       │   ├── exercise-catalog.component.html
+│   │   │   │       │   ├── exercise-catalog.component.scss
+│   │   │   │       │   └── exercise-catalog.component.ts
+│   │   │   │       └── exercise-detail
+│   │   │   │           ├── exercise-detail.component.html
+│   │   │   │           ├── exercise-detail.component.scss
+│   │   │   │           └── exercise-detail.component.ts
+│   │   │   ├── home
+│   │   │   │   ├── home.routes.ts
+│   │   │   │   └── pages
+│   │   │   │       └── landing
+│   │   │   │           ├── landing.component.html
+│   │   │   │           ├── landing.component.scss
+│   │   │   │           └── landing.component.ts
+│   │   │   └── trainer
+│   │   │       ├── pages
+│   │   │       │   ├── calendar
+│   │   │       │   │   ├── calendar.html
+│   │   │       │   │   ├── calendar.scss
+│   │   │       │   │   └── calendar.ts
+│   │   │       │   ├── client-list
+│   │   │       │   │   ├── client-list.html
+│   │   │       │   │   ├── client-list.scss
+│   │   │       │   │   └── client-list.ts
+│   │   │       │   ├── client-search
+│   │   │       │   │   ├── client-search.html
+│   │   │       │   │   ├── client-search.scss
+│   │   │       │   │   └── client-search.ts
+│   │   │       │   ├── dashboard
+│   │   │       │   │   ├── dashboard-trainer.component.html
+│   │   │       │   │   ├── dashboard-trainer.component.scss
+│   │   │       │   │   └── dashboard-trainer.component.ts
+│   │   │       │   ├── reports
+│   │   │       │   │   ├── reports.html
+│   │   │       │   │   ├── reports.scss
+│   │   │       │   │   └── reports.ts
+│   │   │       │   ├── routine-form
+│   │   │       │   │   ├── routine-form.html
+│   │   │       │   │   ├── routine-form.scss
+│   │   │       │   │   └── routine-form.ts
+│   │   │       │   ├── routines
+│   │   │       │   │   ├── routines.html
+│   │   │       │   │   ├── routines.scss
+│   │   │       │   │   └── routines.ts
+│   │   │       │   └── stats
+│   │   │       │       ├── stats.html
+│   │   │       │       ├── stats.scss
+│   │   │       │       └── stats.ts
+│   │   │       └── trainer.routes.ts
+│   │   └── shared
+│   │       └── components
+│   │           ├── confirm-modal
+│   │           │   ├── confirm-modal.component.html
+│   │           │   └── confirm-modal.component.ts
+│   │           ├── footer
+│   │           │   ├── footer.component.html
+│   │           │   ├── footer.component.scss
+│   │           │   └── footer.component.ts
+│   │           └── navbar
+│   │               ├── navbar.component.html
+│   │               ├── navbar.component.scss
+│   │               └── navbar.component.ts
+│   ├── index.html
+│   ├── main.ts
+│   └── styles.scss
+├── tsconfig.app.json
+├── tsconfig.json
+└── tsconfig.spec.json
+
+48 directories, 110 files

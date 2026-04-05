@@ -6,7 +6,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('vf_token');
   const isAuthRequest = req.url.includes('/api/auth/');
 
   // 2. REGLA DE ORO: Si es login/register O ya tiene el header, NO TOCAR
