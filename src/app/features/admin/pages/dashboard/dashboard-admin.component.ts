@@ -53,7 +53,7 @@ export class DashboardAdminComponent implements OnInit {
     const token = this.auth.getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.get<any[]>('http://localhost:8080/api/usuarios', { headers }).subscribe({
+    this.http.get<any[]>('https://gym-backend-xwat.onrender.com/api/usuarios', { headers }).subscribe({
       next: (usuarios) => {
         this.totalUsuarios.set(usuarios.length);
         this.totalClientes.set(usuarios.filter(u => u.rol?.nombre === 'CLIENTE').length);

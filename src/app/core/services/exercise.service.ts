@@ -47,7 +47,7 @@ export class ExerciseService {
   }
 
   getWgerExercises(): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>('http://localhost:8080/api/wger/exercises');
+    return this.http.get<Exercise[]>('https://gym-backend-xwat.onrender.com/api/wger/exercises');
   }
 
   getCategories(): Observable<string[]> {
