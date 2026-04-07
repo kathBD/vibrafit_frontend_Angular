@@ -1,0 +1,121 @@
+<div class="container mt-4">
+  
+  <!-- Botón Volver -->
+  <div class="mb-3">
+    <button class="btn btn-secondary" routerLink="/trainer/rutinas">
+      <i class="bi bi-arrow-left"></i> Volver a Rutinas
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="text-center p-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Cargando rutina...</p>
+    </div>
+  }
+
+  @if (!isLoading() && rutina()) {
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>{{ rutina()!.nombre }}</h3>
+        <div>
+          <button class="btn btn-outline-primary me-2" (click)="showAssignModal.set(true)">
+            <i class="bi bi-person-plus"></i> Asignar a cliente
+          </button>
+          <button class="btn btn-warning" [routerLink]="['/trainer/rutinas/editar', rutina()!.rutinaId]">
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">{{ rutina()!.descripcion || 'Sin descripción' }}</p>
+
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <strong>Objetivo:</strong> 
+            <span class="badge bg-info">{{ rutina()!.objetivo || 'General' }}</span>
+          </div>
+          <div class="col-md-3">
+            <strong>Nivel:</strong> 
+            <span class="badge bg-warning">{{ rutina()!.nivel || 'Principiante' }}</span>
+          </div>
+          <div class="col-md-3">
+            <strong>Estado:</strong>
+            @if (rutina()!.activo) {
+              <span class="badge bg-success">Activa</span>
+            } @else {
+              <span class="badge bg-secondary">Inactiva</span>
+            }
+          </div>
+          <div class="col-md-3">
+            <strong>Cliente:</strong>
+            @if (rutina()!.cliente?.nombre) {
+              <span class="badge bg-success">{{ rutina()!.cliente?.nombre }}</span>
+            } @else {
+              <span class="badge bg-secondary">Sin asignar</span>
+            }
+          </div>
+        </div>
+
+        <h4 class="mt-4">📋 Ejercicios</h4>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Ejercicio</th>
+                <th>Series</th>
+                <th>Repeticiones</th>
+                <th>Peso (kg)</th>
+                <th>Descanso (seg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ej of rutina()!.ejercicios; track $index) {
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ ej.exercise.name }}</td>
+                  <td>{{ ej.series }}</td>
+                  <td>{{ ej.repeticiones }}</td>
+                  <td>{{ ej.peso }}</td>
+                  <td>{{ ej.descanso }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center">No hay ejercicios en esta rutina</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Asignar a Cliente -->
+  @if (showAssignModal()) {
+    <div class="modal-overlay" (click)="showAssignModal.set(false)">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5>Asignar rutina a cliente</h5>
+          <button class="btn-close" (click)="showAssignModal.set(false)">×</button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Rutina:</strong> {{ rutina()?.nombre }}</p>
+          <select class="form-select" (change)="selectedClienteId.set($any($event.target).value)">
+            <option value="">-- Seleccionar cliente --</option>
+            @for (cliente of clientes(); track cliente.usuarioId) {
+              <option [value]="cliente.usuarioId">{{ cliente.nombre }} ({{ cliente.correo }})</option>
+            }
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="showAssignModal.set(false)">Cancelar</button>
+          <button class="btn btn-primary" (click)="asignarCliente()" [disabled]="!selectedClienteId()">
+            Asignar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

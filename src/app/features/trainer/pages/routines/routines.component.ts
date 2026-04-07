@@ -27,7 +27,7 @@ export class RoutinesComponent implements OnInit {
 
   cargarRutinas() {
     this.isLoading.set(true);
-
+console.log('🔍 Cargando rutinas...');
     const userId = this.auth.user()?.usuarioId;
 
     if (this.userRole() === 'ENTRENADOR' && userId) {

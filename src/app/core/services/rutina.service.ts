@@ -17,7 +17,10 @@ export interface Rutina {
   rutinaId?: number;
   nombre: string;
   descripcion: string;
+  objetivo?: string;     
+  nivel?: string;         
   activo: boolean;
+  estaActiva?: boolean;   
   fechaCreacion?: Date;
   fechaModificacion?: Date;
   creador?: { usuarioId: number; nombre: string };
@@ -41,10 +44,12 @@ export class RutinaService {
   }
 
   // ========== CRUD RUTINAS ==========
-  
-  crearRutina(rutina: Rutina): Observable<Rutina> {
-    return this.http.post<Rutina>(this.apiUrl, rutina, { headers: this.getHeaders() });
-  }
+
+crearRutina(rutina: Rutina): Observable<Rutina> {
+  const token = this.auth.getToken();
+  console.log('Token enviado:', token ? token.substring(0, 30) + '...' : 'NO HAY TOKEN');
+  return this.http.post<Rutina>(this.apiUrl, rutina, { headers: this.getHeaders() });
+}
 
   listarTodas(): Observable<Rutina[]> {
     return this.http.get<Rutina[]>(this.apiUrl, { headers: this.getHeaders() });

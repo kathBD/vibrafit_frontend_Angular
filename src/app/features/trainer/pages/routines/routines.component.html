@@ -1,56 +1,66 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>📋 Gestión de Rutinas</h2>
-    <button class="btn btn-primary" routerLink="/trainer/rutinas/nueva">
-      + Nueva Rutina
-    </button>
-  </div>
-
-  @if (errorMsg()) {
-    <div class="alert alert-danger">{{ errorMsg() }}</div>
-  }
-
-  @if (isLoading()) {
-    <div class="text-center p-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-2">Cargando rutinas...</p>
+<div class="rutinas-container">
+  <div class="container mt-4">
+    
+    <!-- Botón Volver al Dashboard -->
+    <div class="mb-3">
+      <button class="btn btn-secondary" routerLink="/trainer/dashboard">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+      </button>
     </div>
-  }
 
-  @if (!isLoading()) {
-    <div class="row">
-      @for (rutina of rutinas(); track rutina.rutinaId) {
-        <div class="col-md-4 mb-3">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">{{ rutina.nombre }}</h5>
-              <p class="card-text text-muted">{{ rutina.descripcion || 'Sin descripción' }}</p>
-              <div class="mb-2">
-                <span class="badge bg-info me-1">{{ rutina.ejercicios?.length || 0 }} ejercicios</span>
-                @if (rutina.activo) {
-                  <span class="badge bg-success">Activa</span>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>📋 Gestión de Rutinas</h2>
+      <button class="btn btn-primary" routerLink="/trainer/rutinas/nueva">
+        + Nueva Rutina
+      </button>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="alert alert-danger">{{ errorMsg() }}</div>
+    }
+
+    @if (isLoading()) {
+      <div class="text-center p-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2">Cargando rutinas...</p>
+      </div>
+    }
+
+    @if (!isLoading()) {
+      <div class="row">
+        @for (rutina of rutinas(); track rutina.rutinaId) {
+          <div class="col-md-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ rutina.nombre }}</h5>
+                <p class="card-text text-muted">{{ rutina.descripcion || 'Sin descripción' }}</p>
+                <div class="mb-2">
+                  <span class="badge bg-info me-1">{{ rutina.ejercicios?.length || 0 }} ejercicios</span>
+                  @if (rutina.activo) {
+                    <span class="badge bg-success">Activa</span>
+                  } @else {
+                    <span class="badge bg-secondary">Inactiva</span>
+                  }
+                </div>
+                @if (rutina.cliente?.nombre) {
+                  <p class="small text-muted mb-1">👤 Cliente: {{ rutina.cliente!.nombre }}</p>
                 } @else {
-                  <span class="badge bg-secondary">Inactiva</span>
+                  <p class="small text-muted mb-1">👤 Cliente: Sin asignar</p>
                 }
+                <p class="small text-muted">📅 Creada: {{ rutina.fechaCreacion | date:'dd/MM/yyyy' }}</p>
               </div>
-              @if (rutina.cliente?.nombre) {
-           <p class="small text-muted mb-1">👤 Cliente: {{ rutina.cliente!.nombre }}</p>
-              } @else {
-                <p class="small text-muted mb-1">👤 Cliente: Sin asignar</p>
-              }
-              <p class="small text-muted">📅 Creada: {{ rutina.fechaCreacion | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <div class="card-footer bg-transparent d-flex justify-content-between">
-              <button class="btn btn-sm btn-warning" [routerLink]="['/trainer/rutinas/editar', rutina.rutinaId]">
-                <i class="bi bi-pencil"></i> Editar
-              </button>
-              <button class="btn btn-sm btn-danger" (click)="eliminarRutina(rutina.rutinaId!, rutina.nombre)">
-                <i class="bi bi-trash"></i> Eliminar
-              </button>
+              <div class="card-footer bg-transparent d-flex justify-content-between">
+                <button class="btn btn-sm btn-warning" [routerLink]="['/trainer/rutinas/editar', rutina.rutinaId]">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="eliminarRutina(rutina.rutinaId!, rutina.nombre)">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      }
-    </div>
-  }
+        }
+      </div>
+    }
+  </div>
 </div>

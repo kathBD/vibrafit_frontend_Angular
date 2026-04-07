@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h3>➕ Nueva Rutina</h3>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="rutinaForm" (ngSubmit)="onSubmit()">
+
+        <div class="mb-3">
+          <label class="form-label">Nombre de la rutina *</label>
+          <input type="text" class="form-control" formControlName="nombre">
+          @if (rutinaForm.get('nombre')?.invalid && rutinaForm.get('nombre')?.touched) {
+            <small class="text-danger">El nombre es obligatorio</small>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" formControlName="descripcion" rows="3"></textarea>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Objetivo</label>
+            <select class="form-select" formControlName="objetivo">
+              <option value="general">General</option>
+              <option value="ganar fuerza">Ganar fuerza</option>
+              <option value="bajar peso">Bajar peso</option>
+              <option value="resistencia">Resistencia</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nivel</label>
+            <select class="form-select" formControlName="nivel">
+              <option value="principiante">Principiante</option>
+              <option value="intermedio">Intermedio</option>
+              <option value="experto">Experto</option>
+            </select>
+          </div>
+        </div>
+
+        @if (errorMsg()) {
+          <div class="alert alert-danger">{{ errorMsg() }}</div>
+        }
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="rutinaForm.invalid || isLoading()">
+            @if (isLoading()) {
+              <span>Guardando...</span>
+            } @else {
+              <span>Guardar Rutina</span>
+            }
+          </button>
+          <button type="button" class="btn btn-secondary" routerLink="/trainer/rutinas">
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+           
