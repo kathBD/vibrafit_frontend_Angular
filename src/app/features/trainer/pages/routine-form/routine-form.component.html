@@ -1,63 +1,145 @@
 <div class="container mt-4">
+  <div class="mb-3">
+    <button class="btn btn-secondary" routerLink="/trainer/rutinas">
+      ← Volver a Rutinas
+    </button>
+  </div>
+
   <div class="card">
-    <div class="card-header">
-      <h3>➕ Nueva Rutina</h3>
+    <div class="card-header bg-primary text-white">
+      <h3>{{ isEditing() ? 'Editar Rutina' : 'Nueva Rutina' }}</h3>
     </div>
     <div class="card-body">
-      <form [formGroup]="rutinaForm" (ngSubmit)="onSubmit()">
 
-        <div class="mb-3">
-          <label class="form-label">Nombre de la rutina *</label>
-          <input type="text" class="form-control" formControlName="nombre">
-          @if (rutinaForm.get('nombre')?.invalid && rutinaForm.get('nombre')?.touched) {
-            <small class="text-danger">El nombre es obligatorio</small>
-          }
+      <form [formGroup]="rutinaForm" (ngSubmit)="guardarRutina()">
+        <!-- Datos básicos -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Nombre *</label>
+              <input type="text" formControlName="nombre" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label class="form-label">Objetivo</label>
+              <select formControlName="objetivo" class="form-select">
+                <option>General</option>
+                <option>Fuerza</option>
+                <option>Hipertrofia</option>
+                <option>Resistencia</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label class="form-label">Nivel</label>
+              <select formControlName="nivel" class="form-select">
+                <option>Principiante</option>
+                <option>Intermedio</option>
+                <option>Avanzado</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Descripción</label>
-          <textarea class="form-control" formControlName="descripcion" rows="3"></textarea>
+          <textarea formControlName="descripcion" class="form-control" rows="2"></textarea>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Objetivo</label>
-            <select class="form-select" formControlName="objetivo">
-              <option value="general">General</option>
-              <option value="ganar fuerza">Ganar fuerza</option>
-              <option value="bajar peso">Bajar peso</option>
-              <option value="resistencia">Resistencia</option>
-            </select>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label class="form-label">Duración (minutos)</label>
+              <input type="number" formControlName="duracionMinutos" class="form-control">
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Nivel</label>
-            <select class="form-select" formControlName="nivel">
-              <option value="principiante">Principiante</option>
-              <option value="intermedio">Intermedio</option>
-              <option value="experto">Experto</option>
-            </select>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label class="form-label">Día de semana</label>
+              <select formControlName="diaSemana" class="form-select">
+                <option>Lunes</option>
+                <option>Martes</option>
+                <option>Miércoles</option>
+                <option>Jueves</option>
+                <option>Viernes</option>
+                <option>Sábado</option>
+                <option>Domingo</option>
+              </select>
+            </div>
           </div>
         </div>
-
-        @if (errorMsg()) {
-          <div class="alert alert-danger">{{ errorMsg() }}</div>
+       <div class="form-group">
+    <label>Asignar a Cliente</label>
+    <select formControlName="clienteId" class="form-select">
+        <option [value]="null">Sin asignar</option>
+        @for (cliente of clientes(); track cliente.usuarioId) {
+            <option [value]="cliente.usuarioId">
+                {{ cliente.nombre }} - {{ cliente.correo }}
+            </option>
         }
+    </select>
+</div>
+        <!-- Selección de ejercicios -->
+        <div class="card mt-3">
+          <div class="card-header bg-info text-white">
+            <h5>Ejercicios</h5>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <select id="ejercicioSelect" class="form-select" (change)="agregarEjercicio($event)">
+                  <option value="">Selecciona un ejercicio...</option>
+                  @for (ej of ejerciciosDisponibles(); track ej.id) {
+                  <option [value]="ej.id">{{ ej.name }} - {{ ej.category }} - {{ ej.level }}</option>
+                  }
+                </select>
+              </div>
+            </div>
 
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary" [disabled]="rutinaForm.invalid || isLoading()">
-            @if (isLoading()) {
-              <span>Guardando...</span>
+            @if (ejerciciosSeleccionados().length > 0) {
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Ejercicio</th>
+                  <th>Series</th>
+                  <th>Repeticiones</th>
+                  <th>Descanso(s)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ej of ejerciciosSeleccionados(); track $index) {
+                <tr>
+                  <td>{{ ej.orden }}</td>
+                  <td>{{ ej.nombre }}</td>
+                  <td><input type="number" class="form-control" [(ngModel)]="ej.series"
+                      [ngModelOptions]="{standalone: true}" style="width:80px"></td>
+                  <td><input type="number" class="form-control" [(ngModel)]="ej.repeticiones"
+                      [ngModelOptions]="{standalone: true}" style="width:80px"></td>
+                  <td><input type="number" class="form-control" [(ngModel)]="ej.descanso"
+                      [ngModelOptions]="{standalone: true}" style="width:80px"></td>
+                  <td><button type="button" class="btn btn-danger btn-sm"
+                      (click)="eliminarEjercicio($index)">Eliminar</button></td>
+                </tr>
+                }
+              </tbody>
+            </table>
             } @else {
-              <span>Guardar Rutina</span>
+            <div class="alert alert-warning">No hay ejercicios agregados</div>
             }
-          </button>
-          <button type="button" class="btn btn-secondary" routerLink="/trainer/rutinas">
-            Cancelar
-          </button>
+          </div>
         </div>
 
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+            {{ isLoading() ? 'Guardando...' : (isEditing() ? 'Actualizar' : 'Guardar') }}
+          </button>
+          <button type="button" class="btn btn-secondary ms-2" routerLink="/trainer/rutinas">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
 </div>
-           

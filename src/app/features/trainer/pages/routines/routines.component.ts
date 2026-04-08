@@ -24,37 +24,94 @@ export class RoutinesComponent implements OnInit {
   ngOnInit() {
     this.cargarRutinas();
   }
-
-  cargarRutinas() {
-    this.isLoading.set(true);
-console.log('🔍 Cargando rutinas...');
-    const userId = this.auth.user()?.usuarioId;
-
-    if (this.userRole() === 'ENTRENADOR' && userId) {
-      this.rutinaService.obtenerPorCreador(userId).subscribe({
-        next: (data: Rutina[]) => {
+cargarRutinas() {
+  this.isLoading.set(true);
+  
+  const userId = this.auth.user()?.usuarioId;
+  const userRole = this.auth.rolNormalizado();
+  
+  console.log('👤 userId:', userId);
+  console.log('🎭 Rol normalizado:', userRole);
+  
+  if (userRole === 'ADMIN') {
+    console.log('✅ ADMIN - Cargando todas las rutinas');
+    this.rutinaService.listarTodas().subscribe({
+      next: (data: Rutina[]) => {
+        console.log('📊 Datos recibidos:', data);
+        if (data && Array.isArray(data)) {
           this.rutinas.set(data);
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.errorMsg.set('Error cargando rutinas');
-          this.isLoading.set(false);
+        } else {
+          console.warn('La respuesta no es un array:', data);
+          this.rutinas.set([]);
         }
-      });
-    } else {
-      this.rutinaService.listarTodas().subscribe({
-        next: (data: Rutina[]) => {
-          this.rutinas.set(data);
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.errorMsg.set('Error cargando rutinas');
-          this.isLoading.set(false);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Error:', err);
+        this.errorMsg.set('Error cargando rutinas');
+        this.isLoading.set(false);
+      }
+    });
+  } 
+  else if (userRole === 'ENTRENADOR' && userId) {
+    console.log('✅ ENTRENADOR - Cargando rutinas del entrenador ID:', userId);
+    
+    this.rutinaService.obtenerPorCreador(userId).subscribe({
+      next: (data: any) => {
+        console.log('📊 Respuesta completa:', data);
+        console.log('📊 Tipo de respuesta:', typeof data);
+        console.log('📊 Es array:', Array.isArray(data));
+        
+        // Si la respuesta es un array, usarlo; si no, intentar extraer
+        let rutinasArray: Rutina[] = [];
+        if (Array.isArray(data)) {
+          rutinasArray = data;
+        } else if (data && data._embedded && data._embedded.rutinas) {
+          rutinasArray = data._embedded.rutinas;
+        } else if (data && data.content) {
+          rutinasArray = data.content;
+        } else if (data && typeof data === 'object') {
+          // Si es un objeto, convertirlo a array
+          rutinasArray = Object.values(data);
         }
-      });
-    }
+        
+        console.log('📊 Rutinas procesadas:', rutinasArray.length);
+        this.rutinas.set(rutinasArray);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Error:', err);
+        console.error('Status:', err.status);
+        console.error('Mensaje:', err.message);
+        console.error('Error body:', err.error);
+        
+        // Si el error es 200 pero ok false, puede ser que la respuesta no es JSON
+        if (err.status === 200 && err.error) {
+          console.log('Intentando parsear respuesta no JSON:', err.error);
+          try {
+            // Intentar parsear como texto plano
+            const parsed = JSON.parse(err.error);
+            if (Array.isArray(parsed)) {
+              this.rutinas.set(parsed);
+              this.isLoading.set(false);
+              return;
+            }
+          } catch(e) {
+            console.error('No se pudo parsear:', e);
+          }
+        }
+        
+        this.errorMsg.set('Error cargando rutinas: ' + (err.message || err.statusText));
+        this.isLoading.set(false);
+      }
+    });
+  } 
+  else {
+    console.log('⚠️ Rol no autorizado o sin userId:', userRole);
+    this.errorMsg.set('No tienes permiso para ver rutinas');
+    this.isLoading.set(false);
   }
-
+}
   eliminarRutina(id: number, nombre: string) {
     if (confirm(`¿Eliminar la rutina "${nombre}"?`)) {
       this.rutinaService.eliminarRutina(id).subscribe({
@@ -63,4 +120,6 @@ console.log('🔍 Cargando rutinas...');
       });
     }
   }
+
+  
 }
