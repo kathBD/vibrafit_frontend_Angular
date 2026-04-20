@@ -3,9 +3,11 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth  = inject(AuthService);
+  const auth = inject(AuthService);
   const token = auth.getToken();
-  if (token && req.url.includes('localhost:8080')) {
+  
+  // Elimina la condición de localhost
+  if (token) {
     return next(req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     }));

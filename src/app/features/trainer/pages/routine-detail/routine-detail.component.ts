@@ -1,18 +1,19 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { RutinaService, Rutina } from '../../../core/services/rutina.service';
-import { UsuarioService, Usuario } from '../../../core/services/usuario.service';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { RutinaService, Rutina } from '../../../../core/services/rutina.service';
+import { UsuarioService, Usuario } from '../../../../core/services/usuario.service';
 
 @Component({
   selector: 'app-routine-detail',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './routine-detail.component.html',
-  styleUrls: ['./routine-detail.component.scss']
+  styleUrls: ['./routine-detail.component.scss']  
 })
 export class RoutineDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private rutinaService = inject(RutinaService);
   private usuarioService = inject(UsuarioService);
 
@@ -34,10 +35,12 @@ export class RoutineDetailComponent implements OnInit {
     this.isLoading.set(true);
     this.rutinaService.obtenerPorId(id).subscribe({
       next: (data: Rutina) => {
+        console.log('Rutina cargada:', data);
         this.rutina.set(data);
         this.isLoading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error:', err);
         this.isLoading.set(false);
       }
     });
@@ -47,6 +50,7 @@ export class RoutineDetailComponent implements OnInit {
     this.usuarioService.getUsuariosPorRol('CLIENTE').subscribe({
       next: (data: Usuario[]) => {
         this.clientes.set(data);
+        console.log('Clientes cargados:', data.length);
       },
       error: (err) => console.error('Error cargando clientes:', err)
     });
@@ -65,5 +69,9 @@ export class RoutineDetailComponent implements OnInit {
         error: () => alert('❌ Error al asignar la rutina')
       });
     }
+  }
+
+  volver() {
+    this.router.navigate(['/trainer/rutinas']);
   }
 }

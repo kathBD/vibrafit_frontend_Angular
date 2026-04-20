@@ -3,10 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+// En rutina.service.ts — reemplaza las interfaces
 
+// core/services/rutina.service.ts
 export interface EjercicioRutina {
   ejercicioRutinaId?: number;
-  exercise: { id: string; name: string };
+  ejercicio?: { id: string; name: string; nombre?: string };
+  exercise?: { id: string; name: string };  // ← Agregar para el componente detail
+  ejercicioId?: string;
+  nombre?: string;
   series: number;
   repeticiones: number;
   peso: number;
@@ -24,8 +29,11 @@ export interface Rutina {
   estaActiva?: boolean;   
   fechaCreacion?: Date;
   fechaModificacion?: Date;
-  creador?: { usuarioId: number; nombre: string };
-  cliente?: { usuarioId: number; nombre: string };
+  creadorId?: number;
+  clienteId?: number;
+  cliente?: { usuarioId: number; nombre: string };  
+  estado?: string;
+  diaSemana?: string;       
   ejercicios?: EjercicioRutina[];
 }
 
@@ -38,7 +46,7 @@ export class RutinaService {
   constructor(
     private http: HttpClient,
     private auth: AuthService
-  ) {}
+  ) { }
 
   private getHeaders() {
     return { 'Authorization': `Bearer ${this.auth.getToken()}` };
@@ -46,11 +54,11 @@ export class RutinaService {
 
   // ========== CRUD RUTINAS ==========
 
-crearRutina(rutina: Rutina): Observable<Rutina> {
-  const token = this.auth.getToken();
-  console.log('Token enviado:', token ? token.substring(0, 30) + '...' : 'NO HAY TOKEN');
-  return this.http.post<Rutina>(this.apiUrl, rutina, { headers: this.getHeaders() });
-}
+  crearRutina(rutina: Rutina): Observable<Rutina> {
+    const token = this.auth.getToken();
+    console.log('Token enviado:', token ? token.substring(0, 30) + '...' : 'NO HAY TOKEN');
+    return this.http.post<Rutina>(this.apiUrl, rutina, { headers: this.getHeaders() });
+  }
 
   listarTodas(): Observable<Rutina[]> {
     return this.http.get<Rutina[]>(this.apiUrl, { headers: this.getHeaders() });
@@ -61,27 +69,27 @@ crearRutina(rutina: Rutina): Observable<Rutina> {
   }
 
   // En rutina.service.ts
-obtenerPorCreador(creadorId: number): Observable<any> {
-  const url = `${this.apiUrl}/creador/${creadorId}`;
-  console.log('📡 GET URL:', url);
-  
-  return this.http.get(url, { 
-    headers: this.getHeaders(),
-    observe: 'response',  // Para ver la respuesta completa
-    responseType: 'json'
-  }).pipe(
-    map(response => {
-      console.log('📡 Respuesta completa:', response);
-      console.log('📡 Body:', response.body);
-      return response.body;
-    }),
-    catchError(error => {
-      console.error('❌ Error en petición:', error);
-      console.error('❌ Error response:', error.error);
-      return throwError(() => error);
-    })
-  );
-}
+  obtenerPorCreador(creadorId: number): Observable<any> {
+    const url = `${this.apiUrl}/creador/${creadorId}`;
+    console.log('📡 GET URL:', url);
+
+    return this.http.get(url, {
+      headers: this.getHeaders(),
+      observe: 'response',  // Para ver la respuesta completa
+      responseType: 'json'
+    }).pipe(
+      map(response => {
+        console.log('📡 Respuesta completa:', response);
+        console.log('📡 Body:', response.body);
+        return response.body;
+      }),
+      catchError(error => {
+        console.error('❌ Error en petición:', error);
+        console.error('❌ Error response:', error.error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   obtenerPorCliente(clienteId: number): Observable<Rutina[]> {
     return this.http.get<Rutina[]>(`${this.apiUrl}/cliente/${clienteId}`, { headers: this.getHeaders() });
@@ -102,4 +110,5 @@ obtenerPorCreador(creadorId: number): Observable<any> {
   asignarACliente(rutinaId: number, clienteId: number): Observable<Rutina> {
     return this.http.put<Rutina>(`${this.apiUrl}/${rutinaId}/asignar-cliente/${clienteId}`, null, { headers: this.getHeaders() });
   }
+  
 }

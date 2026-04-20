@@ -74,7 +74,7 @@
               @for (ej of rutina()!.ejercicios; track $index) {
                 <tr>
                   <td>{{ $index + 1 }}</td>
-                  <td>{{ ej.exercise.name }}</td>
+               <td>{{ ej.exercise?.name || ej.ejercicio?.name || ej.nombre || 'Ejercicio' }}</td>
                   <td>{{ ej.series }}</td>
                   <td>{{ ej.repeticiones }}</td>
                   <td>{{ ej.peso }}</td>

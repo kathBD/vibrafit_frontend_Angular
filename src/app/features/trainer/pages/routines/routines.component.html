@@ -3,7 +3,7 @@
     
     <!-- Botón Volver al Dashboard -->
     <div class="mb-3">
-      <button class="btn btn-secondary" routerLink="/trainer/dashboard">
+      <button class="btn-back" (click)="volverAlDashboard()">
         <i class="bi bi-arrow-left"></i> Volver al Dashboard
       </button>
     </div>
@@ -42,14 +42,19 @@
                     <span class="badge bg-secondary">Inactiva</span>
                   }
                 </div>
-                @if (rutina.cliente?.nombre) {
-                  <p class="small text-muted mb-1">👤 Cliente: {{ rutina.cliente!.nombre }}</p>
+                @if (rutina.clienteId) {
+                  <p class="small text-muted mb-1">👤 Cliente ID: {{ rutina.clienteId }}</p>
                 } @else {
                   <p class="small text-muted mb-1">👤 Cliente: Sin asignar</p>
                 }
                 <p class="small text-muted">📅 Creada: {{ rutina.fechaCreacion | date:'dd/MM/yyyy' }}</p>
               </div>
               <div class="card-footer bg-transparent d-flex justify-content-between">
+                @if (rutina.rutinaId) {
+                  <button class="btn btn-sm btn-info" (click)="verRutina(rutina.rutinaId)">
+                    <i class="bi bi-eye"></i> Ver Detalle
+                  </button>
+                }
                 <button class="btn btn-sm btn-warning" [routerLink]="['/trainer/rutinas/editar', rutina.rutinaId]">
                   <i class="bi bi-pencil"></i> Editar
                 </button>

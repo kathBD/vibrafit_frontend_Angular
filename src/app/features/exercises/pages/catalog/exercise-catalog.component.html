@@ -1,6 +1,12 @@
 <div class="contenedor-catalogo">
 
   <!-- Encabezado -->
+     <!-- Brand -->
+    <a class="vf-brand" routerLink="/">
+      <img src="assets/images/logo.jpg" alt="VibraFit"
+           class="vf-brand-logo" onerror="this.style.display='none'">
+      <span>VibraFit</span>
+    </a>
   <div class="encabezado">
     <h1>🏋️ Catálogo de Ejercicios</h1>
     <p>Explora {{ ejerciciosFiltrados().length }} ejercicios con instrucciones detalladas</p>
@@ -13,6 +19,10 @@
       <option value="local">Base de datos local</option>
       <option value="wger">Wger</option>
     </select>
+       <button class="btn-back" (click)="volverAlDashboard()">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+      </button>
+    
   </div>
 
   <!-- Filtros -->

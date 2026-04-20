@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -13,22 +11,18 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard, roleGuard(['ADMIN'])],
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
   {
     path: 'trainer',
-    canActivate: [authGuard, roleGuard(['ENTRENADOR'])],
     loadChildren: () => import('./features/trainer/trainer.routes').then(m => m.TRAINER_ROUTES)
   },
   {
     path: 'client',
-    canActivate: [authGuard, roleGuard(['CLIENTE'])],
     loadChildren: () => import('./features/client/client.routes').then(m => m.CLIENT_ROUTES)
   },
   {
     path: 'exercises',
-    canActivate: [authGuard],
     loadChildren: () => import('./features/exercises/exercises.routes').then(m => m.EXERCISES_ROUTES)
   },
   { path: '**', redirectTo: '/auth/login' }

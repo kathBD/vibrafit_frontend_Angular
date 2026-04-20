@@ -1,39 +1,111 @@
+// Contenedor principal con imagen de fondo
 .my-routines-container {
-  padding: 2rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  color: white;
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.7)), 
+              url('/assets/images/fuerza.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 2rem;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.3) 100%);
+    pointer-events: none;
+  }
 }
 
+// Encabezado
 .page-header {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
 
   h1 {
+    color: white;
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
     background: linear-gradient(45deg, #00d2ff, #3a7bd5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: none;
   }
 
   p {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
   }
 }
 
+// Botón volver mejorado
+.btn-back {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  z-index: 100;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateX(-5px);
+  }
+  
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// Alertas
+.alert-error {
+  background: rgba(220, 53, 69, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  color: #f1aeb5;
+  text-align: center;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+// Loading
 .loading-state {
   text-align: center;
   padding: 4rem;
-
+  
   .spinner {
     width: 50px;
     height: 50px;
-    border: 3px solid rgba(255,255,255,0.1);
+    border: 3px solid rgba(255, 255, 255, 0.1);
     border-top-color: #00d2ff;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -41,134 +113,185 @@
   to { transform: rotate(360deg); }
 }
 
+// Estado vacío
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  
+  i {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    color: white;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Grid de rutinas
 .rutinas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
+// Tarjeta de rutina
 .rutina-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,210,255,0.2);
+    transform: translateY(-8px);
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(0, 210, 255, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   }
 
   &.completada {
-    opacity: 0.8;
     border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
   }
+}
 
-  .card-header {
-    padding: 1rem;
-    background: rgba(0,0,0,0.3);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+// Header de tarjeta
+.card-header {
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-    .header-info {
-      h3 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.1rem;
-      }
-
-      .badges {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-
-        .badge {
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          font-weight: 600;
-
-          &.bg-success { background: #28a745; }
-          &.bg-info { background: #17a2b8; }
-          &.bg-warning { background: #ffc107; color: #000; }
-          &.bg-secondary { background: #6c757d; }
-        }
-
-        .nivel {
-          background: rgba(0,210,255,0.2);
-          color: #00d2ff;
-        }
-      }
+  .header-info {
+    h3 {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 0.75rem 0;
+      line-height: 1.3;
     }
   }
+}
 
-  .card-body {
-    padding: 1rem;
+// Badges
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 
-    .descripcion {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.85rem;
-      line-height: 1.4;
-      margin-bottom: 1rem;
-    }
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 
-    .progreso-section {
-      margin-bottom: 1rem;
-
-      .progreso-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-        margin-bottom: 0.3rem;
-        color: rgba(255,255,255,0.6);
-      }
-
-      .progress-bar {
-        height: 6px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 3px;
-        overflow: hidden;
-
-        .progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-          border-radius: 3px;
-          transition: width 0.3s;
-        }
-      }
-    }
-
-    .info-footer {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.5);
-
-      i {
-        margin-right: 0.2rem;
-      }
-    }
+  &.bg-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
   }
 
-  .card-footer {
-    padding: 0.8rem 1rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
+  &.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #00d2ff);
+    color: white;
+  }
 
-    .btn-ver {
-      width: 100%;
-      padding: 0.5rem;
-      background: transparent;
-      border: 1px solid #00d2ff;
-      color: #00d2ff;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
+  &.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9f00);
+    color: #000;
+  }
 
-      &:hover {
-        background: #00d2ff;
-        color: #1a1a2e;
-      }
-    }
+  &.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+  }
+
+  &.nivel {
+    background: rgba(0, 210, 255, 0.2);
+
+    border: 1px solid rgba(0, 210, 255, 0.3);
+  }
+}
+
+// Cuerpo de tarjeta
+.card-body {
+  padding: 1.25rem;
+}
+
+.descripcion {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.info-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  
+  i {
+    margin-right: 0.3rem;
+  }
+  
+  .ejercicios-count, .objetivo {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+}
+
+// Footer de tarjeta
+.card-footer {
+  padding: 1rem 1.25rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-ver {
+  width: 100%;
+  padding: 0.6rem;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+  }
+  
+  i {
+    font-size: 0.9rem;
   }
 }
 
@@ -176,8 +299,8 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -186,38 +309,57 @@
 }
 
 .modal-container {
-  background: #1a1a2e;
-  border: 1px solid #00d2ff;
-  border-radius: 16px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  border-radius: 24px;
   width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
+  max-width: 650px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 1.25rem 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   h2 {
+    color: white;
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: 700;
   }
 
   .btn-close {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
-    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: all 0.2s;
 
     &:hover {
-      color: #fff;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
     }
   }
 }
@@ -231,119 +373,130 @@
 .rutina-info {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   .descripcion {
-    color: rgba(255,255,255,0.8);
-    margin-bottom: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    -webkit-line-clamp: unset;
   }
 
   .info-row {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
     align-items: center;
+    
+    .nivel, .objetivo {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
   }
 }
 
 .ejercicios-list {
   h3 {
+    color: #00d2ff;
     font-size: 1rem;
     margin-bottom: 1rem;
-    color: #00d2ff;
+  }
+}
+
+.ejercicio-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  .ejercicio-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
+  .ejercicio-info {
+    flex: 1;
 
-    &.completado {
-      background: rgba(40,167,69,0.1);
-      border-left: 3px solid #28a745;
+    h4 {
+      margin: 0 0 0.3rem 0;
+      font-size: 0.9rem;
+      color: white;
     }
 
-    .ejercicio-info {
-      h4 {
-        margin: 0 0 0.3rem 0;
-        font-size: 0.9rem;
-      }
+    .detalles {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
 
-      .detalles {
-        display: flex;
-        gap: 0.8rem;
-        font-size: 0.7rem;
-        color: rgba(255,255,255,0.5);
-
-        i {
-          margin-right: 0.2rem;
-        }
-      }
-    }
-
-    .ejercicio-check {
-      .checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.75rem;
-        cursor: pointer;
-
-        input {
-          cursor: pointer;
-        }
+      i {
+        margin-right: 0.2rem;
       }
     }
   }
 }
 
-.progreso-total {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
-
-  .progreso-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .progress-bar {
-    height: 8px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 4px;
-    overflow: hidden;
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-  }
+.no-ejercicios {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 2rem;
 }
 
 .modal-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: flex-end;
 
   .btn-cerrar {
-    padding: 0.5rem 1.5rem;
-    background: #00d2ff;
+    padding: 0.6rem 1.5rem;
+    background: linear-gradient(135deg, #00d2ff, #3a7bd5);
     border: none;
-    color: #1a1a2e;
-    border-radius: 6px;
+    color: white;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+    transition: all 0.2s;
 
     &:hover {
-      background: #3a7bd5;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
     }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .my-routines-container {
+    padding: 1rem;
+  }
+  
+  .btn-back {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 1rem;
+    display: inline-flex;
+  }
+  
+  .page-header {
+    margin-top: 1rem;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .rutinas-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .modal-container {
+    max-width: 95%;
   }
 }
