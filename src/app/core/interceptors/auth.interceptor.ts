@@ -1,9 +1,20 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+<<<<<<< HEAD
   // 1. Evitar SSR (Renderizado en servidor) que a veces rompe Netlify
   if (typeof window === 'undefined') {
     return next(req);
+=======
+  const auth = inject(AuthService);
+  const token = auth.getToken();
+  
+  // Elimina la condición de localhost
+  if (token) {
+    return next(req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    }));
+>>>>>>> develop
   }
 
   const token = localStorage.getItem('vf_token');

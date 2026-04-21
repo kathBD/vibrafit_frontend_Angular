@@ -5,6 +5,31 @@
   color: white;
 }
 
+// ── Brand ─────────────────────────────────────
+.vf-brand {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  span { color: #fff; }
+  &:hover { color: #fff; opacity: .9; }
+}
+
+.vf-brand-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #0D1B2A;
+  display: block;
+}
+
+
 /* HEADER */
 .encabezado {
   text-align: center;
@@ -73,6 +98,7 @@
   }
 }
 
+
 /* FILTROS */
 .filtros {
   display: flex;
@@ -119,6 +145,25 @@
     }
   }
 }
+.btn-back {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+  }
+
 
 /* GRID */
 .grid-ejercicios {

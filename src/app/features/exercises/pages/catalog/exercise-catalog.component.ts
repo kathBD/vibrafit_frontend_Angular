@@ -1,7 +1,9 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ExerciseService, Exercise } from '../../../../core/services/exercise.service';
+import { AuthService } from '../../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-exercise-catalog',
@@ -13,6 +15,8 @@ import { ExerciseService, Exercise } from '../../../../core/services/exercise.se
 export class ExerciseCatalogComponent implements OnInit {
 
   private exerciseService = inject(ExerciseService);
+  private router = inject(Router);
+   private auth = inject(AuthService);
 
   ejercicios = signal<Exercise[]>([]);
   cargando = signal(true);
@@ -34,6 +38,8 @@ export class ExerciseCatalogComponent implements OnInit {
     const termino = normalizar(this.terminoBusqueda().trim());
     const categoria = this.categoriaSeleccionada();
     const nivel = this.nivelSeleccionado();
+
+    
 
     if (termino) {
       lista = lista.filter(e => {
@@ -128,6 +134,12 @@ export class ExerciseCatalogComponent implements OnInit {
       return newSet;
     });
   }
+  volverAlDashboard(): void {
+    const rol = this.auth.rolNormalizado();
+    if (rol === 'ADMIN')           this.router.navigate(['/admin/dashboard']);
+    else if (rol === 'ENTRENADOR') this.router.navigate(['/trainer/dashboard']);
+    else                           this.router.navigate(['/client/dashboard']);
+  }
 
   showPlaceholder(exerciseId: string): boolean {
     return this.imagenesConError().has(exerciseId);
@@ -157,4 +169,5 @@ export class ExerciseCatalogComponent implements OnInit {
     }
     return (words[0][0] + words[1][0]).toUpperCase();
   }
+  
 }
