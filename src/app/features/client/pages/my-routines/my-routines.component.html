@@ -1,0 +1,139 @@
+<div class="my-routines-container">
+  <!-- Encabezado -->
+  <div class="page-header">
+    <button class="btn-back" (click)="volverAlDashboard()">
+      <i class="bi bi-arrow-left"></i> Volver al Dashboard
+    </button>
+    <h1>📋 Mis Rutinas</h1>
+    <p>Estas son las rutinas que tu entrenador te ha asignado</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  @if (errorMsg()) {
+  <div class="alert-error">
+    <i class="bi bi-exclamation-triangle-fill"></i> {{ errorMsg() }}
+  </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando tus rutinas...</p>
+  </div>
+  }
+
+  <!-- Sin rutinas -->
+  @if (!isLoading() && rutinas().length === 0 && !errorMsg()) {
+  <div class="empty-state">
+    <i class="bi bi-emoji-frown"></i>
+    <h3>No tienes rutinas asignadas</h3>
+    <p>Tu entrenador aún no te ha asignado ninguna rutina.</p>
+  </div>
+  }
+
+  <!-- Grid de rutinas -->
+  @if (!isLoading() && rutinas().length > 0) {
+  <div class="rutinas-grid">
+    @for (rutina of rutinas(); track rutina.rutinaId) {
+    <div class="rutina-card" [class.completada]="rutina.estado === 'completada'">
+      <div class="card-header">
+        <div class="header-info">
+          <h3>{{ rutina.nombre }}</h3>
+          <div class="badges">
+            <span class="badge" [class]="getEstadoBadgeClass(rutina.estado || '')">
+              {{ (rutina.estado || '') | uppercase }}
+            </span>
+            <span class="badge nivel" [class]="getNivelBadgeClass(rutina.nivel || '')">
+              {{ rutina.nivel }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <p class="descripcion">{{ rutina.descripcion || 'Sin descripción' }}</p>
+
+        @if (rutina.diaSemana) {
+        <div class="dia-semana">
+          <i class="bi bi-calendar-week"></i>
+          <span>{{ rutina.diaSemana }}</span>
+        </div>
+        }
+
+        <div class="info-footer">
+          <span class="ejercicios-count">
+            <i class="bi bi-list-check"></i> {{ rutina.ejercicios?.length || 0 }} ejercicios
+          </span>
+          <span class="objetivo">
+            <i class="bi bi-trophy"></i> {{ rutina.objetivo || 'General' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-ver" (click)="verDetalle(rutina)">
+          <i class="bi bi-eye"></i> Ver detalles
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Modal de detalle de rutina -->
+  @if (showDetailModal() && selectedRutina()) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ selectedRutina()?.nombre }}</h2>
+        <button class="btn-close" (click)="cerrarDetalle()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rutina-info">
+          <p class="descripcion">{{ selectedRutina()?.descripcion || 'Sin descripción' }}</p>
+          <div class="info-row">
+            <span class="badge" [class]="getEstadoBadgeClass(selectedRutina()?.estado || '')">
+              {{ selectedRutina()?.estado | uppercase }}
+            </span>
+            <span class="nivel">Nivel: {{ selectedRutina()?.nivel }}</span>
+            <span class="objetivo">Objetivo: {{ selectedRutina()?.objetivo || 'General' }}</span>
+          </div>
+        </div>
+
+        <div class="ejercicios-list">
+          <h3>Ejercicios</h3>
+          @if (selectedRutina()?.ejercicios?.length === 0) {
+          <p class="no-ejercicios">No hay ejercicios en esta rutina</p>
+          }
+          @for (ejercicio of selectedRutina()?.ejercicios; track $index) {
+          <div class="ejercicio-item">
+            <div class="ejercicio-info">
+              <h4>{{ ejercicio.ejercicio?.name || ejercicio.nombre || 'Ejercicio' }}</h4>
+              <div class="detalles">
+                <span><i class="bi bi-arrow-repeat"></i> {{ ejercicio.series || 3 }} series</span>
+                <span><i class="bi bi-graph-up"></i> {{ ejercicio.repeticiones || 10 }} reps</span>
+                @if (ejercicio.peso && ejercicio.peso > 0) {
+                <span><i class="bi bi-trophy"></i> {{ ejercicio.peso }} kg</span>
+                }
+              </div>
+            </div>
+            <button class="btn-ver-ejercicio"
+              (click)="verDetalleEjercicio(ejercicio.ejercicioId || ejercicio.ejercicio?.id || '')">
+              <i class="bi bi-eye"></i> Ver ejercicio
+            </button>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cerrar" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

@@ -19,6 +19,7 @@ interface KpiCard {
   styleUrl: './dashboard-admin.component.scss',
   encapsulation: ViewEncapsulation.None
 })
+
 export class DashboardAdminComponent implements OnInit {
   private auth = inject(AuthService);
   private http  = inject(HttpClient);

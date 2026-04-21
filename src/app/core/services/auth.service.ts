@@ -1,9 +1,14 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-export interface Rol     { rolId?: number; nombre: string; }
+export interface Rol {
+  rolId?: number;
+  nombre: string;
+}
+
 export interface Usuario {
   usuarioId: number;
   correo:    string;
@@ -12,8 +17,16 @@ export interface Usuario {
   activo:    boolean;
   rol:       Rol;
 }
-export interface LoginRequest  { correo: string; password: string; }
-export interface LoginResponse { token: string; usuario: Usuario; }
+
+export interface LoginRequest {
+  correo: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  usuario: Usuario;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,19 +41,23 @@ export class AuthService {
 
   user            = this.userSignal.asReadonly();
   isAuthenticated = computed(() => this.userSignal() !== null);
-  userRole        = computed(() => this.userSignal()?.rol.nombre || null);
+  userRole        = computed(() => this.userSignal()?.rol?.nombre || null);
   rolNormalizado  = computed(() => {
     const rol = this.userRole();
     if (!rol) return '';
     return rol === 'ADMINISTRADOR' ? 'ADMIN' : rol;
   });
 
-  login(credentials: LoginRequest) {
+  // ========== LOGIN CORREGIDO ==========
+  login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.API}/login`, credentials).pipe(
-      tap(res => {
-        localStorage.setItem(this.TOKEN_KEY, res.token);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(res.usuario));
-        this.userSignal.set(res.usuario);
+      tap((response: LoginResponse) => {
+        if (response.token) {
+          localStorage.setItem(this.TOKEN_KEY, response.token);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.usuario));
+          this.userSignal.set(response.usuario);
+          console.log('✅ Token guardado:', response.token.substring(0, 30) + '...');
+        }
       })
     );
   }
@@ -56,17 +73,28 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  getUser(): Usuario | null {
+    return this.userSignal();
+  }
+
   redirectByRole(): void {
     const rol = this.rolNormalizado();
-    if      (rol === 'ADMIN')      this.router.navigate(['/admin/dashboard']);
-    else if (rol === 'ENTRENADOR') this.router.navigate(['/trainer/dashboard']);
-    else                           this.router.navigate(['/client/dashboard']);
+    console.log('🔀 Redirigiendo por rol:', rol);
+    if (rol === 'ADMIN') {
+      this.router.navigate(['/admin/dashboard']);
+    } else if (rol === 'ENTRENADOR') {
+      this.router.navigate(['/trainer/dashboard']);
+    } else {
+      this.router.navigate(['/client/dashboard']);
+    }
   }
 
   private loadUser(): Usuario | null {
     try {
       const raw = localStorage.getItem(this.USER_KEY);
       return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 }

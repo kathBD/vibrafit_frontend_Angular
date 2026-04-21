@@ -1,11 +1,9 @@
-<!-- dashboard-trainer.component.html -->
 <div class="dashboard-layout" [style.background-image]="'url(assets/images/trainner.jpg)'">
 
   <!-- Sidebar -->
   <aside class="sidebar" [class.open]="menuOpen()">
     <div class="sidebar-brand">
-      <img src="assets/images/logo.jpg" alt="VibraFit"
-           width="38" class="rounded" onerror="this.style.display='none'">
+      <img src="assets/images/logo.jpg" alt="VibraFit" width="38" class="rounded" onerror="this.style.display='none'">
       <span>VibraFit</span>
     </div>
 
@@ -48,6 +46,11 @@
           <i class="bi bi-lightning-charge-fill"></i> Biblioteca Ejercicios
         </a>
       </li>
+      <li>
+        <a routerLink="/trainer/perfil" routerLinkActive="active">
+          <i class="bi bi-person-circle"></i> Mi Perfil
+        </a>
+      </li>
     </ul>
 
     <div class="sidebar-footer">
@@ -67,7 +70,7 @@
     </header>
 
     <main class="main-content">
-      <!-- Header con bienvenida y estadísticas rápidas -->
+      <!-- Header con bienvenida -->
       <div class="page-header">
         <h2>¡Bienvenido, {{ userName() }}! 🏋️‍♂️</h2>
         <p>Aquí puedes gestionar tus clientes, rutinas y seguir su progreso.</p>
@@ -119,40 +122,38 @@
       <!-- Dashboard Cards -->
       <div class="dashboard-cards">
         @for (card of cards; track card.title) {
-          <a [routerLink]="card.link" class="dash-card">
-            <div class="dash-card-icon" [style.background]="card.color">
-              <i [class]="'bi ' + card.icon"></i>
-            </div>
-            <div class="dash-card-body">
-              <h4>{{ card.title }}</h4>
-              <p>{{ card.desc }}</p>
-            </div>
-            @if (card.badge) {
-              <span class="dash-card-badge" [style.background]="card.badgeColor">
-                {{ card.badge }}
-              </span>
-            }
-            <i class="bi bi-arrow-right dash-card-arrow"></i>
-          </a>
+        <a [routerLink]="card.link" class="dash-card">
+          <div class="dash-card-icon" [style.background]="card.color">
+            <i [class]="'bi ' + card.icon"></i>
+          </div>
+          <div class="dash-card-body">
+            <h4>{{ card.title }}</h4>
+            <p>{{ card.desc }}</p>
+          </div>
+          @if (card.badge) {
+          <span class="dash-card-badge" [style.background]="card.badgeColor">
+            {{ card.badge }}
+          </span>
+          }
+          <i class="bi bi-arrow-right dash-card-arrow"></i>
+        </a>
         }
       </div>
 
       <!-- Acciones Rápidas y Actividad Reciente -->
       <div class="dashboard-footer">
-        <!-- Acciones Rápidas -->
         <div class="quick-actions">
           <h3>Acciones Rápidas</h3>
           <div class="actions-grid">
             @for (action of quickActions; track action.label) {
-              <a [routerLink]="action.link" class="action-item">
-                <i [class]="'bi ' + action.icon" [style.color]="action.color"></i>
-                <span>{{ action.label }}</span>
-              </a>
+            <a [routerLink]="action.link" class="action-item">
+              <i [class]="'bi ' + action.icon" [style.color]="action.color"></i>
+              <span>{{ action.label }}</span>
+            </a>
             }
           </div>
         </div>
 
-        <!-- Actividad Reciente -->
         <div class="recent-activity">
           <h3>Actividad Reciente</h3>
           <div class="activity-list">

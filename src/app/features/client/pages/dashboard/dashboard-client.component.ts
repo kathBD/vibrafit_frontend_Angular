@@ -21,7 +21,7 @@ export class DashboardClientComponent {
   
 
   cards = [
-    { icon: 'bi-list-check',     title: 'Mis Rutinas', desc: 'Consulta tus rutinas asignadas por tu entrenador.', link: '/client/rutinas',  color: '#0d6efd' },
+    { icon: 'bi-list-check',     title: 'Mis Rutinas', desc: 'Consulta tus rutinas asignadas por tu entrenador.', link: '/client/my-routines',  color: '#0d6efd' },
     { icon: 'bi-graph-up-arrow', title: 'Mi Progreso', desc: 'Revisa tu evolución física y estadísticas.',        link: '/client/progreso', color: '#212529' },
     { icon: 'bi-cash-coin',      title: 'Mis Planes',  desc: 'Consulta tus planes activos y pagos.',              link: '/client/planes',   color: '#f39c12' }
   ];

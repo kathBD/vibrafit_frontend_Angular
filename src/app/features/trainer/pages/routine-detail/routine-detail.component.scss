@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+              url('/assets/images/fitnessgym.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 2rem;
+}
+
+.card {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 16px;
+  color: white;
+}
+
+.card-header {
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table {
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-container {
+  background: #1e1e2e;
+  border-radius: 16px;
+  max-width: 450px;
+  width: 90%;
+}

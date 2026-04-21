@@ -17,8 +17,7 @@ export interface Usuario {
   sexo?:           string;
   peso?:           number;
   estatura?:       number;
-  activo?:         boolean;      // ← Para uso interno
-  esta_activo?:    boolean;      // ← Para enviar al backend
+  activo?:         boolean;
   especialidad?:   string;
   horarioInicio?:  string;
   horarioFin?:     string;
@@ -43,6 +42,8 @@ export class UsuarioService {
     });
   }
 
+  // ========== CRUD USUARIOS ==========
+
   getAll(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.API, { headers: this.headers() });
   }
@@ -51,19 +52,22 @@ export class UsuarioService {
     return this.http.get<Usuario>(`${this.API}/${id}`, { headers: this.headers() });
   }
 
-  getPorRol(rol: string): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(`${this.API}/rol/${rol}`, { headers: this.headers() });
+  // ✅ MÉTODO CORREGIDO - Usa this.API (no apiUrl)
+  getUsuariosPorRol(rol: string): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.API}/rol/${rol}`, { 
+      headers: this.headers() 
+    });
   }
 
+  // ❌ ELIMINAR este método duplicado (está mal escrito)
+  // getPorRol(rol: string): Observable<Usuario[]> { ... }
+
   crear(usuario: Usuario): Observable<Usuario> {
-    // Transformar para el backend
     const usuarioBackend = this.transformarParaBackend(usuario);
-    console.log('Enviando al backend:', usuarioBackend); // Para depurar
     return this.http.post<Usuario>(this.API, usuarioBackend, { headers: this.headers() });
   }
 
   editar(id: number, usuario: Usuario): Observable<Usuario> {
-    // Transformar para el backend
     const usuarioBackend = this.transformarParaBackend(usuario);
     return this.http.put<Usuario>(`${this.API}/${id}`, usuarioBackend, { headers: this.headers() });
   }
@@ -72,7 +76,22 @@ export class UsuarioService {
     return this.http.delete<void>(`${this.API}/${id}`, { headers: this.headers() });
   }
 
-  // Método para transformar el objeto de Angular al formato que espera el backend
+  // ========== PERFIL ==========
+
+  getPerfil(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.API}/perfil`, { headers: this.headers() });
+  }
+
+  actualizarPerfil(usuario: Partial<Usuario>): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.API}/perfil`, usuario, { headers: this.headers() });
+  }
+
+  cambiarPassword(data: { passwordActual: string; passwordNueva: string }): Observable<any> {
+    return this.http.post(`${this.API}/cambiar-password`, data, { headers: this.headers() });
+  }
+
+  // ========== TRANSFORMACIÓN ==========
+
   private transformarParaBackend(usuario: Usuario): any {
     const backendObj: any = {
       nombre: usuario.nombre,
@@ -88,13 +107,12 @@ export class UsuarioService {
       especialidad: usuario.especialidad || "",
       horarioInicio: usuario.horarioInicio || "",
       horarioFin: usuario.horarioFin || "",
-      esta_activo: usuario.activo !== undefined ? usuario.activo : true,  // ← CLAVE: convertir activo a esta_activo
+      activo: usuario.activo !== undefined ? usuario.activo : true,
       rol: {
-        rolId: usuario.rol?.rolId || 1
+        rolId: usuario.rol?.rolId
       }
     };
 
-    // Solo incluir ID si existe
     if (usuario.usuarioId) {
       backendObj.usuarioId = usuario.usuarioId;
     }

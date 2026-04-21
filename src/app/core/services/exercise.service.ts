@@ -1,3 +1,4 @@
+// core/services/exercise.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -23,7 +24,8 @@ export interface Exercise {
 export class ExerciseService {
 
   private apiBase = 'http://localhost:8080/api';
-  private apiUrl = `${this.apiBase}/exercises`;
+  // Usa el endpoint que funciona en tu backend
+  private apiUrl = `${this.apiBase}/rutinas/ejercicios`;
 
   constructor(
     private http: HttpClient,
@@ -35,24 +37,24 @@ export class ExerciseService {
   }
 
   getAllExercises(): Observable<Exercise[]> {
+    console.log('📥 Llamando a:', this.apiUrl);
     return this.http.get<Exercise[]>(this.apiUrl, {
       headers: this.getHeaders()
     });
   }
 
   getExerciseById(id: string): Observable<Exercise> {
-    return this.http.get<Exercise>(`${this.apiUrl}/${id}`, {
+    return this.http.get<Exercise>(`${this.apiBase}/exercises/${id}`, {
       headers: this.getHeaders()
     });
-  }
-
-  getWgerExercises(): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>('http://localhost:8080/api/wger/exercises');
   }
 
   getCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/categories`, {
+    return this.http.get<string[]>(`${this.apiBase}/exercises/categories`, {
       headers: this.getHeaders()
     });
   }
+  getWgerExercises(): Observable<Exercise[]> {
+  return this.http.get<Exercise[]>('https://wger.de/api/v2/exerciseinfo/?limit=50');
+}
 }
