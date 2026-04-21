@@ -429,19 +429,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   margin-bottom: 0.75rem;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(0, 210, 255, 0.3);
+    transform: translateX(5px);
   }
 
   .ejercicio-info {
     flex: 1;
-
+    
     h4 {
       margin: 0 0 0.3rem 0;
       font-size: 0.9rem;
@@ -453,10 +456,11 @@
       gap: 1rem;
       flex-wrap: wrap;
       font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.6);
 
       i {
         margin-right: 0.2rem;
+        color: #00d2ff;
       }
     }
   }
