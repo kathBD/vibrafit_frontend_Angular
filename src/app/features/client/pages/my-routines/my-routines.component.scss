@@ -263,6 +263,29 @@
   }
 }
 
+.btn-ver-ejercicio {
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: none;
+  color: #00d2ff;
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  &:hover {
+    color: #66e0ff;
+    gap: 0.5rem;
+  }
+
+  i {
+    font-size: 0.8rem;
+  }
+}
+
 // Footer de tarjeta
 .card-footer {
   padding: 1rem 1.25rem;

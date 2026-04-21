@@ -41,11 +41,10 @@ export class MyRoutinesComponent implements OnInit {
     this.rutinaService.obtenerPorCliente(clienteId).subscribe({
       next: (data: any[]) => {
         console.log('📊 Rutinas asignadas:', data);
-        // Agregar estado por defecto a cada rutina
         const rutinasConEstado = data.map(rutina => ({
           ...rutina,
           estado: rutina.activo ? 'activa' : 'inactiva',
-           diaSemana: rutina.diaSemana || 'No especificado'
+          diaSemana: rutina.diaSemana || 'No especificado'
         }));
         this.rutinas.set(rutinasConEstado);
         this.isLoading.set(false);
@@ -78,7 +77,6 @@ export class MyRoutinesComponent implements OnInit {
   }
 
   verDetalle(rutina: Rutina) {
-    // Asegurar que tiene estado
     const rutinaConEstado = {
       ...rutina,
       estado: rutina.estado || (rutina.activo ? 'activa' : 'inactiva')
@@ -90,6 +88,16 @@ export class MyRoutinesComponent implements OnInit {
   cerrarDetalle() {
     this.showDetailModal.set(false);
     this.selectedRutina.set(null);
+  }
+
+  // 🔥 NUEVO MÉTODO - Ver detalle del ejercicio
+  verDetalleEjercicio(ejercicioId: string) {
+    if (ejercicioId) {
+      console.log('🔍 Ver ejercicio ID:', ejercicioId);
+      this.router.navigate(['/exercises', ejercicioId]);
+    } else {
+      console.warn('⚠️ No se pudo obtener el ID del ejercicio');
+    }
   }
 
   volverAlDashboard() {
